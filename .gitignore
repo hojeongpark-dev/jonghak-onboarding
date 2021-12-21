@@ -1,1 +1,4 @@
 .idea
+.yarn
+node_modules
+dist
