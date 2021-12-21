@@ -4,6 +4,7 @@
     "module": "commonjs",
     "rootDir": "./",
     "moduleResolution": "node",
+    "types": ["node"],
     "typeRoots": [
       "/node_modules/@types"
     ],

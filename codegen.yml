@@ -1,0 +1,27 @@
+schema:
+  - https://dev-api.creatrip.com/graphql
+  - ./local/schema.graphql
+documents:
+  - ./src/**/*.graphql
+overwrite: true
+generates:
+  src/graphql-types.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+    config:
+      declarationKind:
+        union: type
+        type: interface
+        input: interface
+        scalar: interface
+        arguments: interface
+        interface: interface
+      enumsAsTypes: true
+      includeDirectives: true
+      commentDescriptions: true
+      flattenGeneratedTypes: true
+      avoidOptionals:
+        field: false
+        object: false
+        inputValue: false

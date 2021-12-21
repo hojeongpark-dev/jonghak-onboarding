@@ -2,6 +2,7 @@
 module.exports = {
   env: {
     browser: true,
+    node: true,
     es2021: true,
   },
   parser: "@typescript-eslint/parser",
@@ -28,7 +29,7 @@ module.exports = {
     "prettier",
     "airbnb-base",
   ],
-  ignorePatterns: ["dist/", "node_modules/"],
+  ignorePatterns: ["dist/", "node_modules/", "src/graphql-types.ts"],
   rules: {
     quotes: [2, "double", { avoidEscape: true }],
     "import/extensions": [
@@ -41,6 +42,10 @@ module.exports = {
     ],
     "no-undef": "off",
     "react/jsx-uses-react": "off",
+    "comma-dangle": "off",
+    "no-param-reassign": "off",
+    "no-shadow": "off",
+    "no-unused-vars": "off",
     "react/react-in-jsx-scope": "off",
   },
 };
