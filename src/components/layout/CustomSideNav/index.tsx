@@ -2,7 +2,8 @@ import Sider from "antd/es/layout/Sider";
 import { Menu } from "antd";
 import SubMenu from "antd/lib/menu/SubMenu";
 import { NavLink } from "react-router-dom";
-import { NAV_PAGES, URL_LABELS, URLS } from "../../constants/pages";
+import { PRIVATE_PAGES } from "../../../constants/pages";
+import { URL_LABELS, URLS } from "../../../constants/urls";
 
 export default function CustomSideNav() {
   return (
@@ -17,7 +18,7 @@ export default function CustomSideNav() {
           <NavLink to={URLS.HOME}>{URL_LABELS.HOME}</NavLink>
         </Menu.Item>
         <SubMenu key="subMenu" title="Features">
-          {NAV_PAGES.map(({ label, path }, index) => (
+          {PRIVATE_PAGES.map(({ label, path }, index) => (
             <Menu.Item key={`${label}${index}`}>
               <NavLink to={path}>{label}</NavLink>
             </Menu.Item>

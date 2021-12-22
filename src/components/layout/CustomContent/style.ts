@@ -1,7 +1,8 @@
 import styled from "styled-components";
 
-const CustomContentLayout = styled.section`
-  display: flex;
+// eslint-disable-next-line import/prefer-default-export
+export const CustomContentLayout = styled.section`
+  display: block;
   padding: 1.5rem;
   overflow: initial;
   height: 100%;
@@ -10,6 +11,3 @@ const CustomContentLayout = styled.section`
   max-width: 80rem;
   margin: 0 auto;
 `;
-
-// eslint-disable-next-line import/prefer-default-export
-export { CustomContentLayout };

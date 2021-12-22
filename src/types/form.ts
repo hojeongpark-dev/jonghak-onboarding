@@ -1,4 +1,4 @@
-import React, { ChangeEvent, ChangeEventHandler } from "react";
+import React from "react";
 import { AnySchema } from "yup/lib/schema";
 
 export enum FormType {
@@ -14,26 +14,26 @@ export enum FormType {
 }
 
 type FormValidatorScheme = {
-  initialValue?: string;
+  initialValue?: unknown;
   validator?: AnySchema;
 };
 
-type TextFormInfo = {
-  type: FormType.TEXT | FormType.PASSWORD;
+type TextFormInfo = FormValidatorScheme & {
+  formType: FormType.TEXT | FormType.PASSWORD;
   placeholder?: string;
-  defaultValue?: string;
+  initialValue?: string;
   allowClear?: boolean;
   style?: React.CSSProperties;
-  // onChange?: ChangeEventHandler<HTMLInputElement>;
 };
 
-type RadioFormInfo = {
-  type: FormType.RADIO;
+type RadioFormInfo = FormValidatorScheme & {
+  formType: FormType.RADIO;
   defaultKey: string;
   radios: Array<{ label: string; key: string }>;
-  onChange?: (e: React.ChangeEvent) => void;
 };
 
+export type FormProperty = TextFormInfo | RadioFormInfo;
+
 export type FormInfo = {
-  [K: string]: FormValidatorScheme & (TextFormInfo | RadioFormInfo);
+  [K: string]: FormProperty;
 };

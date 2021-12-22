@@ -1,20 +1,48 @@
-import { Link } from "react-router-dom";
-
+import React, { useLayoutEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Spin } from "antd";
+import { toast } from "react-toastify";
 import useMyInfo from "../apis/myInfo";
+import { useAppDispatch } from "../redux/store";
+import { authActions } from "../redux/slice/auth";
+import { getErrorDescription } from "../network/error";
+import { URLS } from "../constants/urls";
+import Home from "../page/Home";
+import CenterLayout from "../components/layout/styled/CenterLayout";
+import useDidMount from "../hooks/useDidMount";
 
-export default function withAuth(component: () => JSX.Element) {
-  const Component = component;
-  const { data, isLoading, error } = useMyInfo();
+const withAuth = (Component: () => JSX.Element) => () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const [pending, setPending] = useState(false);
+  const { loading, error, updateUserInfo } = useMyInfo();
 
-  console.log(data);
+  const checkAuth = async () => {
+    try {
+      setPending(true);
+      const user = await updateUserInfo();
+      dispatch(authActions.setUser(user));
+    } catch (e) {
+      toast.error(getErrorDescription(e));
+      navigate(URLS.LOGIN);
+    } finally {
+      setPending(false);
+    }
+  };
 
-  if (isLoading) {
-    return <div>loading...</div>;
+  useDidMount(checkAuth);
+
+  if (loading || pending) {
+    return (
+      <CenterLayout>
+        <Spin />
+      </CenterLayout>
+    );
   }
 
-  if (error) {
-    return <div>error</div>;
-  }
+  if (error) return <Home />;
 
   return <Component />;
-}
+};
+
+export default withAuth;

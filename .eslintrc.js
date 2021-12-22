@@ -46,6 +46,7 @@ module.exports = {
     "no-param-reassign": "off",
     "no-shadow": "off",
     "no-unused-vars": "off",
+    "react/display-name": "off",
     "react/react-in-jsx-scope": "off",
   },
 };

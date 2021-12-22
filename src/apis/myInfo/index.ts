@@ -1,4 +1,5 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
+import { Member } from "../../graphql-types";
 
 const MY_INFO = gql`
   query MyInfo {
@@ -9,13 +10,19 @@ const MY_INFO = gql`
 `;
 
 export default function useMyInfo() {
-  const { data, error } = useQuery(MY_INFO);
-  // console.log(error, data);
-  const isLoading = !error && !data;
+  const {
+    data: user, error, refetch, loading
+  } = useQuery<Member>(MY_INFO);
+
+  const updateUserInfo = async () => {
+    const res = await refetch();
+    return res.data;
+  };
+
   return {
-    //   signIn,
-    data,
-    isLoading,
+    user,
+    loading,
     error,
+    updateUserInfo,
   };
 }

@@ -30,7 +30,7 @@ export const getErrorDescription = (error: unknown) => {
     graphQLErrors,
     networkError,
   } = error as ApolloError;
-  if (graphQLErrors) return graphQLErrors.map(getGraphQlErrorDescription);
+  if (graphQLErrors) return graphQLErrors.map(getGraphQlErrorDescription).join("\n");
   if (networkError) return getNetworkErrorDescription(networkError);
   return "";
 };
