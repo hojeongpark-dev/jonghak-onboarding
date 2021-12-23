@@ -4,9 +4,22 @@ const STRING = {
   PRODUCT_DESCRIPTION: "Everyone is an insider",
   LOGIN: "Login",
   LOGOUT: "Logout",
-  NEW_TIP: "새 팁 생성",
+  TIP_TITLE: "팁 제목",
+  TITLE: "제목",
+  CODE: "CODE",
+  MANAGER: "담당자",
+  CREATED_AT: "생성일자",
+  IS_ACTIVE: "공개여부",
+  TOGGLE_ACTIVE_SUCCESS: "공개 상태 변경 성공",
+  DELETE: "삭제",
+  CREATE_SUCCESS: "생성 성공",
+  DELETE_SUCCESS: "삭제 성공",
+  OPEN_NEW_TIP_MODAL: "새 팁 생성",
+  CREATE_NEW_TIP: "팁 생성하기",
+  CREATE: "생성",
+  CANCEL: "취소",
   ID_PLACEHOLDER: "Email",
-  PASSWORD_PLACEHOLDER: "Password"
+  PASSWORD_PLACEHOLDER: "Password",
 };
 
 export default STRING;

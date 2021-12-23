@@ -15,7 +15,7 @@ const SIGN_IN = gql`
   }
 `;
 
-export default function useSignIn() {
+export default function useSignInMutation() {
   const [requestSignIn, { error, data, loading }] = useMutation<
     SignInMutation,
     SignInMutationVariables

@@ -4,10 +4,12 @@ import TripEvent from "../page/TripEvent";
 import Home from "../page/Home";
 import { URL_LABELS, URLS } from "./urls";
 import withAuth from "../hoc/withAuth";
+import TipDetail from "../page/TipDetail";
 
 export type PageInfo = {
   label?: URL_LABELS;
   path: URLS;
+  hideMenu?: boolean;
   Element: () => JSX.Element;
 };
 
@@ -21,6 +23,12 @@ export const PRIVATE_PAGES: PageInfo[] = [
     label: URL_LABELS.TIP,
     path: URLS.TIP,
     Element: withAuth(Tip),
+  },
+  {
+    label: URL_LABELS.TIP,
+    path: URLS.TIP_DETAIL,
+    hideMenu: true,
+    Element: withAuth(TipDetail),
   },
 ];
 

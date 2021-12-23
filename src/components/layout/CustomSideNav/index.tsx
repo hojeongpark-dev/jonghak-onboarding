@@ -18,11 +18,13 @@ export default function CustomSideNav() {
           <NavLink to={URLS.HOME}>{URL_LABELS.HOME}</NavLink>
         </Menu.Item>
         <SubMenu key="subMenu" title="Features">
-          {PRIVATE_PAGES.map(({ label, path }, index) => (
-            <Menu.Item key={`${label}${index}`}>
-              <NavLink to={path}>{label}</NavLink>
-            </Menu.Item>
-          ))}
+          {PRIVATE_PAGES.filter(({ hideMenu }) => !hideMenu).map(
+            ({ label, path }, index) => (
+              <Menu.Item key={`${label}${index}`}>
+                <NavLink to={path}>{label}</NavLink>
+              </Menu.Item>
+            )
+          )}
         </SubMenu>
       </Menu>
     </Sider>

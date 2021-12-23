@@ -1,26 +1,42 @@
 import React from "react";
-import { Button } from "antd";
 import { useImmer } from "use-immer";
+import { toast } from "react-toastify";
 import Flex from "../../components/layout/styled/Flex";
-import useTips from "../../apis/tip";
+import useTipsQuery from "../../apis/tip/useTipsQuery";
 import { LanguageType, QueryTipsArgs } from "../../graphql-types";
 import { languageCategoriesKo } from "./constants";
-import CategoryFilter from "../../components/CategoryFilter";
-import NewTipButton from "./components/NewTipButton";
+import CategoryFilter from "../../components/common/CategoryFilter";
+import CreateButton from "../../components/common/CreateButton";
+import STRING from "../../constants/strings";
+import SearchBar from "../../components/common/SearchBar";
+import TipListTable from "./components/TipListTable";
+import {
+  useDeleteTipMutation,
+  useToggleTipActiveMutation,
+} from "../../apis/tip/useTipMutations";
+import { getErrorDescription } from "../../network/error";
+import { DEFAULT_LIMIT_SIZE } from "../../constants/list";
+import useToggle from "../../hooks/useToggle";
+import NewTipModal from "./components/NewTipModal";
 
 const initialArgs: QueryTipsArgs = {
   input: {
     filter: {
       language: "KOREAN",
     },
-    limit: 20,
+    limit: DEFAULT_LIMIT_SIZE,
     page: 1,
   },
 };
 
 function Tip(): JSX.Element {
   const [queryTipsArgs, setQueryTipsArgs] = useImmer(initialArgs);
-  const { tips } = useTips(queryTipsArgs);
+  const { tips, loading, refetch } = useTipsQuery(queryTipsArgs);
+  const { toggleTipActive } = useToggleTipActiveMutation();
+  const { requestDelete } = useDeleteTipMutation();
+  const [modalVisible, toggleModalVisible, modalKey] = useToggle(true);
+
+  const refreshTips = () => refetch(queryTipsArgs);
 
   const handleChangeLangFilter = (key: LanguageType) => {
     setQueryTipsArgs((prev) => {
@@ -28,8 +44,29 @@ function Tip(): JSX.Element {
     });
   };
 
-  const handleClickNewTip = () => {
-    // TODO OPEN MODAL
+  const handleChangeFilterTitle = (value: string) => {
+    setQueryTipsArgs((prev) => {
+      prev.input.filter.search = value;
+    });
+  };
+
+  const handleTipDelete = async (code: number) => {
+    try {
+      await requestDelete(code);
+      await refreshTips();
+      toast.success(STRING.DELETE_SUCCESS);
+    } catch (e) {
+      toast.error(getErrorDescription(e));
+    }
+  };
+
+  const handleTipToggleActive = async (code: number) => {
+    try {
+      await toggleTipActive(code);
+      toast.success(STRING.TOGGLE_ACTIVE_SUCCESS);
+    } catch (e) {
+      toast.error(getErrorDescription(e));
+    }
   };
 
   return (
@@ -39,15 +76,31 @@ function Tip(): JSX.Element {
         categories={languageCategoriesKo}
         onClickCategory={handleChangeLangFilter}
       />
-      <Flex mt={10}>
-        <NewTipButton onClick={handleClickNewTip}/>
+      <Flex marginY={10}>
+        <CreateButton
+          label={STRING.OPEN_NEW_TIP_MODAL}
+          onClick={toggleModalVisible}
+        />
       </Flex>
-      {/* TODO TABLE */}
-      <Flex flexDirection={"column"}>
-        {tips?.edges?.map((tip) => (
-          <Flex key={tip.code}>{tip.code}{tip.title}</Flex>
-        ))}
+      <Flex mb={10}>
+        <SearchBar
+          placeholder={STRING.TIP_TITLE}
+          resetWhenEmpty
+          onSearch={handleChangeFilterTitle}
+        />
       </Flex>
+      <TipListTable
+        loading={loading}
+        onTipDelete={handleTipDelete}
+        onTipToggleActive={handleTipToggleActive}
+        tips={tips}
+      />
+      <NewTipModal
+        key={modalKey}
+        onClose={toggleModalVisible}
+        onCreate={refreshTips}
+        isVisible={modalVisible}
+      />
     </>
   );
 }

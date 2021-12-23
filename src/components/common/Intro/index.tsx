@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import STRING from "../../constants/strings";
+import STRING from "../../../constants/strings";
 
 const ProductTitle = styled.h1`
   font-size: 2rem;

@@ -11,7 +11,7 @@ const TIPS = gql`
   }
 `;
 
-export default function useTips(args: QueryTipsArgs) {
+export default function useTipsQuery(args: QueryTipsArgs) {
   const {
     data, loading, error, refetch
   } = useQuery<Query, QueryTipsArgs>(

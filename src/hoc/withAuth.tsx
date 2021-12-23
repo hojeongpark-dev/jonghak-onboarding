@@ -1,8 +1,7 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Spin } from "antd";
 import { toast } from "react-toastify";
-import useMyInfo from "../apis/myInfo";
+import useMyInfoQuery from "../apis/myInfo/useMyInfoQuery";
 import { useAppDispatch } from "../redux/store";
 import { authActions } from "../redux/slice/auth";
 import { getErrorDescription } from "../network/error";
@@ -10,12 +9,13 @@ import { URLS } from "../constants/urls";
 import Home from "../page/Home";
 import CenterLayout from "../components/layout/styled/CenterLayout";
 import useDidMount from "../hooks/useDidMount";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 
 const withAuth = (Component: () => JSX.Element) => () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [pending, setPending] = useState(false);
-  const { loading, error, updateUserInfo } = useMyInfo();
+  const { loading, error, updateUserInfo } = useMyInfoQuery();
 
   const checkAuth = async () => {
     try {
@@ -35,7 +35,7 @@ const withAuth = (Component: () => JSX.Element) => () => {
   if (loading || pending) {
     return (
       <CenterLayout>
-        <Spin />
+        <LoadingSpinner />
       </CenterLayout>
     );
   }
