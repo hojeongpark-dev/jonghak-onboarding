@@ -27,6 +27,7 @@
     "@types/node": "^17.0.2",
     "@types/react": "^17.0.37",
     "@types/react-dom": "^17.0.11",
+    "@types/react-redux": "^7.1.20",
     "@types/styled-components": "^5.1.18",
     "@types/styled-system": "^5.1.13",
     "@types/yup": "^0.29.13",
@@ -35,9 +36,10 @@
     "babel-loader": "^8.2.3",
     "babel-plugin-styled-components": "^2.0.2",
     "css-loader": "^6.5.1",
-    "eslint": "^8.5.0",
+    "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-import-resolver-typescript": "^2.5.0",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.27.1",
@@ -64,6 +66,7 @@
     "immer": "^9.0.7",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-is": "^17.0.2",
     "react-redux": "^7.2.6",
     "react-router-dom": "^6.2.1",
     "react-toastify": "^8.1.0",
@@ -72,10 +75,5 @@
     "use-immer": "^0.6.0",
     "yup": "^0.32.11"
   },
-  "packageManager": "yarn@3.1.1",
-  "dependenciesMeta": {
-    "eslint@8.5.0": {
-      "unplugged": true
-    }
-  }
+  "packageManager": "yarn@3.1.1"
 }

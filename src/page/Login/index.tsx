@@ -1,4 +1,3 @@
-import React from "react";
 import { Button } from "antd";
 import { string } from "yup";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +5,6 @@ import { toast } from "react-toastify";
 import Intro from "../../components/common/Intro";
 import CenterLayout from "../../components/layout/styled/CenterLayout";
 import { LoginFormWrapper } from "./style";
-import { FormType } from "../../types/form";
 import STRING from "../../constants/strings";
 import useForm from "../../hooks/useForm";
 import { getErrorDescription } from "../../network/error";
@@ -15,6 +13,7 @@ import useSignInMutation from "../../apis/signIn/useSignInMutation";
 import { useAppDispatch } from "../../redux/store";
 import { authActions } from "../../redux/slice/auth";
 import { URLS } from "../../constants/urls";
+import { FormType } from "../../types/form/formType";
 
 export default function Login(): JSX.Element {
   const { updateUserInfo } = useMyInfoQuery();

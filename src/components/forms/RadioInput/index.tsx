@@ -1,10 +1,14 @@
-import { Radio } from "antd";
-import { CustomInputProps, RadioFormInfo, RadioInputProps } from "../../../types/form";
+import Radio from "antd/lib/radio";
 import { removeUnusedProperty } from "../../../util/form";
+import { RadioFormInfo } from "../../../types/form/formInfos";
+import {
+  CustomInputProps,
+  RadioInputProps,
+} from "../../../types/form/inputProps";
 
 export default function RadioInput({
   keyAndName,
-  handleChange,
+  onChange,
   radios,
   ...radioFormProps
 }: RadioInputProps & RadioFormInfo & CustomInputProps): JSX.Element {
@@ -12,8 +16,8 @@ export default function RadioInput({
     <Radio.Group
       key={keyAndName}
       name={keyAndName}
-      onChange={handleChange}
-      defaultValue={radioFormProps.initialValue}
+      onChange={onChange}
+      defaultValue={radioFormProps.initialValue?.key}
       {...removeUnusedProperty(radioFormProps)}
     >
       {radios.map(({ label, key }) => (

@@ -13,7 +13,7 @@ export default function SearchBar({
   ...rest
 }: SearchBarProps): JSX.Element {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (onChange) onChange(e);
+    onChange?.(e);
 
     if (resetWhenEmpty && onSearch && e.target.value.length === 0) onSearch("");
   };

@@ -1,4 +1,3 @@
-import React from "react";
 import { useImmer } from "use-immer";
 import { toast } from "react-toastify";
 import Flex from "../../components/layout/styled/Flex";
@@ -6,13 +5,13 @@ import useTipsQuery from "../../apis/tip/useTipsQuery";
 import { LanguageType, QueryTipsArgs } from "../../graphql-types";
 import { languageCategoriesKo } from "./constants";
 import CategoryFilter from "../../components/common/CategoryFilter";
-import CreateButton from "../../components/common/CreateButton";
+import RightButton from "../../components/common/RightButton";
 import STRING from "../../constants/strings";
 import SearchBar from "../../components/common/SearchBar";
 import TipListTable from "./components/TipListTable";
 import {
   useDeleteTipMutation,
-  useToggleTipActiveMutation,
+  useTipUpdateMutation,
 } from "../../apis/tip/useTipMutations";
 import { getErrorDescription } from "../../network/error";
 import { DEFAULT_LIMIT_SIZE } from "../../constants/list";
@@ -32,9 +31,9 @@ const initialArgs: QueryTipsArgs = {
 function Tip(): JSX.Element {
   const [queryTipsArgs, setQueryTipsArgs] = useImmer(initialArgs);
   const { tips, loading, refetch } = useTipsQuery(queryTipsArgs);
-  const { toggleTipActive } = useToggleTipActiveMutation();
+  const { updateTip } = useTipUpdateMutation();
   const { requestDelete } = useDeleteTipMutation();
-  const [modalVisible, toggleModalVisible, modalKey] = useToggle(true);
+  const [modalVisible, toggleModalVisible, modalKey] = useToggle();
 
   const refreshTips = () => refetch(queryTipsArgs);
 
@@ -62,7 +61,7 @@ function Tip(): JSX.Element {
 
   const handleTipToggleActive = async (code: number) => {
     try {
-      await toggleTipActive(code);
+      await updateTip({ code, toggleActive: true });
       toast.success(STRING.TOGGLE_ACTIVE_SUCCESS);
     } catch (e) {
       toast.error(getErrorDescription(e));
@@ -77,7 +76,7 @@ function Tip(): JSX.Element {
         onClickCategory={handleChangeLangFilter}
       />
       <Flex marginY={10}>
-        <CreateButton
+        <RightButton
           label={STRING.OPEN_NEW_TIP_MODAL}
           onClick={toggleModalVisible}
         />
@@ -98,7 +97,7 @@ function Tip(): JSX.Element {
       <NewTipModal
         key={modalKey}
         onClose={toggleModalVisible}
-        onCreate={refreshTips}
+        afterCreate={refreshTips}
         isVisible={modalVisible}
       />
     </>

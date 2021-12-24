@@ -1,66 +1,42 @@
 import { object } from "yup";
-import React, { useMemo } from "react";
-import { AnySchema } from "yup/lib/schema";
-import Reference from "yup/lib/Reference";
+import { Fragment, useMemo } from "react";
 import { useFormik } from "formik";
-import {
-  FormInfo,
-  FormType,
-  ImageUploadInputProps,
-  RadioInputProps,
-  RadioItem,
-  SelectOptionItem,
-  SelectSearchInputProps,
-} from "../types/form";
 import recordToArray from "../util/record";
 import TextInput from "../components/forms/TextInput";
 import RadioInput from "../components/forms/RadioInput";
 import SelectSearchInput from "../components/forms/SelectSearchInput";
 import ImageUploadInput from "../components/forms/ImageUploadInput";
-
-type TextComponent = () => JSX.Element;
-type RadioComponent = (props: RadioInputProps) => JSX.Element;
-type SelectSearchComponent = (
-  props: Omit<SelectSearchInputProps, "handleChange">
-) => JSX.Element;
-type ImageUploadComponent = (props: ImageUploadInputProps) => JSX.Element;
-
-export type FormComponents<Form extends FormInfo> = {
-  [Name in keyof Form]: Form[Name]["formType"] extends FormType.RADIO
-    ? RadioComponent
-    : Form[Name]["formType"] extends FormType.SELECT_SEARCH
-    ? SelectSearchComponent
-    : Form[Name]["formType"] extends FormType.IMAGE_UPLOAD
-    ? ImageUploadComponent
-    : TextComponent;
-};
-
-export type ValidatorType = {
-  [key: string]: AnySchema | Reference;
-};
-
-export type InitialValue<Form extends FormInfo> = {
-  [Name in keyof Form]: Form[Name]["initialValue"];
-};
-
-interface UseFormArgs<F extends FormInfo> {
-  formInfo: F;
-  onSubmit: (value: InitialValue<F>) => void;
-}
+import ToggleInput from "../components/forms/ToggleInput";
+import {
+  FormComponents,
+  InitialValue,
+  UseFormArgs,
+  ValidatorType,
+} from "../types/form/useFormType";
+import { FormInfo } from "../types/form/formInfos";
+import { FormType } from "../types/form/formType";
+import {
+  ImageUploadInputProps,
+  RadioInputProps,
+  SelectSearchInputProps,
+  TextInputProps,
+  ToggleInputProps,
+} from "../types/form/inputProps";
 
 export default function useForm<F extends FormInfo>({
   formInfo,
   onSubmit,
 }: UseFormArgs<F>) {
   const initialValues = useMemo(
-    () => Object.keys(formInfo).reduce(
-      (initialValue, key) => ({
-        ...initialValue,
-        [key]: formInfo[key].initialValue || "",
-      }),
-      {}
-    ) as InitialValue<F>,
-    [formInfo]
+    () =>
+      Object.keys(formInfo).reduce(
+        (initials, key) => ({
+          ...initials,
+          [key]: formInfo[key].initialValue ?? "",
+        }),
+        {}
+      ) as InitialValue<F>,
+    []
   );
 
   const validationSchema = useMemo(() => {
@@ -73,7 +49,7 @@ export default function useForm<F extends FormInfo>({
     });
     const isEmpty = Object.keys(schemaBody).length === 0;
     return isEmpty ? undefined : object().shape(schemaBody);
-  }, [formInfo]);
+  }, []);
 
   const formik = useFormik({
     onSubmit,
@@ -84,65 +60,86 @@ export default function useForm<F extends FormInfo>({
   });
 
   const Form = useMemo(
-    () => recordToArray(formInfo).reduce((forms, form) => {
-      const [name, formDetail] = form;
-      const keyAndName = name.toString();
-      let InputElement;
+    () =>
+      recordToArray(formInfo).reduce((forms, form) => {
+        const [name, formDetail] = form;
+        const keyAndName = name.toString();
+        let InputElement;
 
-      switch (formDetail.formType) {
-        case FormType.TEXT:
-        case FormType.PASSWORD:
-          InputElement = () => (
+        switch (formDetail.formType) {
+          // case FormType.NUMBER:
+          // case FormType.MULTILINE_TEXT:
+          case FormType.TEXT:
+          case FormType.PASSWORD:
+            InputElement = ({ onChange, ...props }: TextInputProps) => (
               <TextInput
                 keyAndName={keyAndName}
-                handleChange={formik.handleChange}
-                {...formDetail}
-              />
-          );
-          break;
-        case FormType.RADIO:
-          InputElement = ({ radios, handleChange }: RadioInputProps) => (
-              <RadioInput
-                handleChange={(e) => {
+                onChange={(e) => {
                   formik.handleChange(e);
-                  if (handleChange) handleChange(e);
+                  onChange?.(e);
                 }}
-                radios={radios}
-                keyAndName={keyAndName}
+                {...props}
                 {...formDetail}
               />
-          );
-          break;
-        case FormType.SELECT_SEARCH:
-          InputElement = ({
-            options,
-            onSearch,
-            onOptionClick,
-          }: SelectSearchInputProps) => (
+            );
+            break;
+          case FormType.RADIO:
+            InputElement = ({ onChange, ...props }: RadioInputProps) => (
+              <RadioInput
+                keyAndName={keyAndName}
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  onChange?.(e);
+                }}
+                {...props}
+                {...formDetail}
+              />
+            );
+            break;
+          case FormType.SELECT_SEARCH:
+            InputElement = ({
+              onOptionClick,
+              ...props
+            }: SelectSearchInputProps) => (
               <SelectSearchInput
+                onOptionClick={(target) => {
+                  formik.setFieldValue(`${name}`, target);
+                  onOptionClick?.(target);
+                }}
                 keyAndName={keyAndName}
-                onOptionClick={onOptionClick}
-                onSearch={onSearch}
-                options={options}
+                {...props}
                 {...formDetail}
               />
-          );
-          break;
-        case FormType.IMAGE_UPLOAD:
-          InputElement = ({ onChange }: ImageUploadInputProps) => (
+            );
+            break;
+          case FormType.TOGGLE:
+            InputElement = ({ onChange, ...props }: ToggleInputProps) => (
+              <ToggleInput
+                keyAndName={keyAndName}
+                onChange={(toggle) => {
+                  formik.setFieldValue(`${name}`, toggle);
+                  onChange?.(toggle);
+                }}
+                {...props}
+                {...formDetail}
+              />
+            );
+            break;
+          case FormType.IMAGE_UPLOAD:
+            InputElement = (props: ImageUploadInputProps) => (
               <ImageUploadInput
                 keyAndName={keyAndName}
-                onChange={onChange}
+                {...props}
                 {...formDetail}
               />
-          );
-          break;
-        default:
-          InputElement = () => <React.Fragment key={keyAndName} />;
-      }
+            );
+            break;
+          default:
+            InputElement = () => <Fragment key={keyAndName} />;
+        }
 
-      return { ...forms, [name]: InputElement };
-    }, {}) as FormComponents<F>,
+        return { ...forms, [name]: InputElement };
+      }, {}) as FormComponents<F>,
     []
   );
 

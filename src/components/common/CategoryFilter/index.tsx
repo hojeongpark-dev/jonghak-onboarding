@@ -1,5 +1,4 @@
 import { Menu } from "antd";
-import React from "react";
 import recordToArray from "../../../util/record";
 
 interface CategoryFilterProps<Category> {

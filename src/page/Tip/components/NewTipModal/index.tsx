@@ -1,86 +1,67 @@
-import { Descriptions, Modal, RadioChangeEvent } from "antd";
-import { string } from "yup";
-import React, { useState } from "react";
+import { RadioChangeEvent } from "antd";
+import { object, string } from "yup";
+import { useState } from "react";
 import { UploadChangeParam } from "antd/lib/upload/interface";
 import { toast } from "react-toastify";
 import useForm from "../../../../hooks/useForm";
-import { FormType, SelectOptionItem } from "../../../../types/form";
 import STRING from "../../../../constants/strings";
 import { languageCategoriesKo } from "../../constants";
 import useBlogForSearchQuery from "../../../../apis/blog/useBlogForSearchQuery";
-import { DEFAULT_LIMIT_SIZE } from "../../../../constants/list";
 import recordToArray from "../../../../util/record";
 import { LanguageType } from "../../../../graphql-types";
 import { useCreateTipMutation } from "../../../../apis/tip/useTipMutations";
 import { getErrorDescription } from "../../../../network/error";
 import { usePreSignedUrlForUploadQuery } from "../../../../apis/preSignedUrl/usePreSignedQueries";
 import s3Upload from "../../../../network/s3Upload";
+import DescriptionRow from "../../../../components/forms/DescriptionRow";
+import CustomModal from "../../../../components/common/CustomModal";
+import { FormType } from "../../../../types/form/formType";
 
 const languageRadios = recordToArray(languageCategoriesKo).map(
   ([key, label]) => ({ label, key })
 );
 
-const labelStyle = {
-  width: 120,
-};
-const contentStyle = { maxWidth: 340, width: 340 };
-
 interface NewTipModalProps {
   isVisible: boolean;
   onClose: () => void;
-  onCreate: () => void;
+  afterCreate: () => void;
 }
-function NewTipModal({ isVisible, onClose, onCreate }: NewTipModalProps): JSX.Element {
-  const [languageState, setLanguageState] = useState<LanguageType>("KOREAN");
+
+function NewTipModal({
+  isVisible,
+  onClose,
+  afterCreate,
+}: NewTipModalProps): JSX.Element {
+  const [language, setLanguage] = useState<LanguageType>("KOREAN");
+  const [uploadImage, setUploadImage] = useState<File | null>(null);
+
   const { createTip } = useCreateTipMutation();
   const { getPreSignedUrl } = usePreSignedUrlForUploadQuery();
-  const [uploadImage, setUploadImage] = useState<File | null>(null);
-  const [blogSearchKeyword, setBlogSearchKeyword] = useState("");
-  const { blogs } = useBlogForSearchQuery({
-    limit: DEFAULT_LIMIT_SIZE,
-    page: 1,
-    filter: {
-      title: blogSearchKeyword,
-      language: languageState,
-    },
-  });
-
-  const blogOptions: SelectOptionItem[] | undefined = blogs?.map(
-    ({ translations }) => ({
-      value: `${translations?.at(0)?.code}`,
-      label: `${translations?.at(0)?.title}`,
-    })
-  );
+  const { blogOptions, setBlogSearchKeyword } = useBlogForSearchQuery(language);
 
   const { formik, Form } = useForm({
     formInfo: {
       language: {
-        description: "언어 선택*",
         formType: FormType.RADIO,
-        initialValue: languageRadios[0].key,
+        initialValue: languageRadios[0],
       },
       title: {
-        description: "제목*",
         formType: FormType.TEXT,
         validator: string().required().min(1),
         initialValue: "",
       },
       connectedBlog: {
-        description: "블로그 연결*",
         formType: FormType.SELECT_SEARCH,
-        validator: string().required(),
-        initialValue: "",
+        validator: object().required(),
+        initialValue: { label: "", value: "" },
       },
       image: {
-        description: "메인 이미지*",
         formType: FormType.IMAGE_UPLOAD,
         validator: string().required(),
         initialValue: "",
       },
     },
-    onSubmit: async ({
-      title, connectedBlog, language, image: filename
-    }) => {
+    onSubmit: async ({ title, connectedBlog, language, image: filename }) => {
       try {
         const preSignedUrl = await getPreSignedUrl({
           domain: "TIP",
@@ -89,12 +70,12 @@ function NewTipModal({ isVisible, onClose, onCreate }: NewTipModalProps): JSX.El
         const imageUrl = await s3Upload({ preSignedUrl, file: uploadImage });
         await createTip({
           title,
-          language,
-          blogTransCode: Number(connectedBlog),
+          language: language.key,
+          blogTransCode: Number(connectedBlog.value),
           imageUrl,
         });
         toast.success(STRING.CREATE_SUCCESS);
-        onCreate();
+        afterCreate();
         onClose();
       } catch (e) {
         toast.error(getErrorDescription(e));
@@ -102,12 +83,8 @@ function NewTipModal({ isVisible, onClose, onCreate }: NewTipModalProps): JSX.El
     },
   });
 
-  const handleOptionClick = ({ value }: SelectOptionItem) => formik.handleChange("connectedBlog")(value);
-
-  const onSearch = (keyword: string) => setBlogSearchKeyword(keyword);
-
   const handleLanguageChange = ({ target: { value } }: RadioChangeEvent) => {
-    setLanguageState(value as LanguageType);
+    setLanguage(value as LanguageType);
   };
 
   const handleImageChange = (info: UploadChangeParam) => {
@@ -118,43 +95,33 @@ function NewTipModal({ isVisible, onClose, onCreate }: NewTipModalProps): JSX.El
   };
 
   return (
-    <Modal
+    <CustomModal
       visible={isVisible}
       onCancel={onClose}
       title={STRING.OPEN_NEW_TIP_MODAL}
       okText={STRING.CREATE}
-      okButtonProps={{ disabled: !formik.isValid }}
-      cancelText={STRING.CANCEL}
-      onOk={() => formik.handleSubmit()}
+      okButtonDisable={!formik.isValid}
+      onOk={formik.handleSubmit}
     >
-      <Descriptions contentStyle={contentStyle}>
-        <Descriptions.Item labelStyle={labelStyle} label="언어 선택*">
-          <Form.language
-            radios={languageRadios}
-            handleChange={handleLanguageChange}
-          />
-        </Descriptions.Item>
-      </Descriptions>
-      <Descriptions contentStyle={contentStyle}>
-        <Descriptions.Item labelStyle={labelStyle} label="제목*">
-          <Form.title />
-        </Descriptions.Item>
-      </Descriptions>
-      <Descriptions contentStyle={contentStyle}>
-        <Descriptions.Item labelStyle={labelStyle} label="블로그 연결*">
-          <Form.connectedBlog
-            onSearch={onSearch}
-            onOptionClick={handleOptionClick}
-            options={blogOptions}
-          />
-        </Descriptions.Item>
-      </Descriptions>
-      <Descriptions contentStyle={contentStyle}>
-        <Descriptions.Item labelStyle={labelStyle} label="메인 이미지*">
-          <Form.image onChange={handleImageChange} />
-        </Descriptions.Item>
-      </Descriptions>
-    </Modal>
+      <DescriptionRow label={STRING.SELECT_LANGUAGE_LABEL}>
+        <Form.language
+          radios={languageRadios}
+          onChange={handleLanguageChange}
+        />
+      </DescriptionRow>
+      <DescriptionRow label={STRING.TITLE_LABEL}>
+        <Form.title />
+      </DescriptionRow>
+      <DescriptionRow label={STRING.CONNECTED_BLOG_LABEL}>
+        <Form.connectedBlog
+          onSearch={setBlogSearchKeyword}
+          options={blogOptions}
+        />
+      </DescriptionRow>
+      <DescriptionRow label={STRING.MAIN_IMAGE_LABEL}>
+        <Form.image onChange={handleImageChange} />
+      </DescriptionRow>
+    </CustomModal>
   );
 }
 

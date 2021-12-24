@@ -1,16 +1,14 @@
 import { Upload } from "antd";
 import { RcFile } from "antd/lib/upload/interface";
-import { boolean } from "yup";
 import { useState } from "react";
-import { UploadFile } from "antd/es/upload/interface";
 import styled from "styled-components";
-import {
-  CustomInputProps,
-  ImageFormInfo,
-  ImageUploadInputProps,
-} from "../../../types/form";
 import { removeUnusedProperty } from "../../../util/form";
 import Flex from "../../layout/styled/Flex";
+import {
+  CustomInputProps,
+  ImageUploadInputProps,
+} from "../../../types/form/inputProps";
+import { ImageFormInfo } from "../../../types/form/formInfos";
 
 const ImageFilePreview = styled.img`
   width: 200px;
@@ -20,9 +18,10 @@ const ImageFilePreview = styled.img`
 export default function ImageUploadInput({
   keyAndName,
   onChange,
+  srcUrl,
   ...imageUploadInputProps
 }: ImageUploadInputProps & ImageFormInfo & CustomInputProps): JSX.Element {
-  const [previewImageUrl, setPreviewImageUrl] = useState("");
+  const [previewImageUrl, setPreviewImageUrl] = useState(srcUrl);
 
   const makePreviewImage = (file?: RcFile) => {
     if (file) {
@@ -40,7 +39,7 @@ export default function ImageUploadInput({
       showUploadList={false}
       onChange={(e) => {
         makePreviewImage(e.file?.originFileObj);
-        if (onChange) onChange(e);
+        onChange?.(e);
       }}
       key={keyAndName}
       name={keyAndName}

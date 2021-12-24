@@ -12,9 +12,7 @@ const TIPS = gql`
 `;
 
 export default function useTipsQuery(args: QueryTipsArgs) {
-  const {
-    data, loading, error, refetch
-  } = useQuery<Query, QueryTipsArgs>(
+  const { data, loading, error, refetch } = useQuery<Query, QueryTipsArgs>(
     TIPS,
     {
       variables: args,

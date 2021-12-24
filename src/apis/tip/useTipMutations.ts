@@ -1,11 +1,16 @@
 import { gql, useMutation } from "@apollo/client";
+import { Simulate } from "react-dom/test-utils";
 import {
   CreateTipArgs,
   Mutation,
   MutationCreateTipArgs,
   MutationDeleteTipArgs,
+  MutationSetBlogTransToTipArgs,
+  MutationSetTipImageArgs,
   MutationToggleTipActiveStatusArgs,
+  MutationUpdateTipArgs,
 } from "../../graphql-types";
+import { Tip } from "../../graphql/fragments";
 
 const DELETE_TIP = gql`
   mutation deleteTip($code: Int!) {
@@ -19,11 +24,12 @@ function useDeleteTipMutation() {
     MutationDeleteTipArgs
   >(DELETE_TIP);
 
-  const requestDelete = (code: number) => deleteTip({
-    variables: {
-      code,
-    },
-  });
+  const requestDelete = (code: number) =>
+    deleteTip({
+      variables: {
+        code,
+      },
+    });
 
   const res = data?.deleteTip;
 
@@ -35,35 +41,104 @@ function useDeleteTipMutation() {
   };
 }
 
-const TOGGLE_TIP_ACTIVE = gql`
-  mutation toggleTipActiveStatus($code: Int!) {
-    toggleTipActiveStatus(code: $code) {
-      code
-      isActive
+const UPDATE_TIP_TITLE = gql`
+  ${Tip}
+  mutation updateTip($input: UpdateTipArgs!) {
+    updateTip(input: $input) {
+      ...TipTable_tip
     }
   }
 `;
 
-function useToggleTipActiveMutation() {
-  const [toggle, { data, loading, error }] = useMutation<
+const UPDATE_TIP_ACTIVE = gql`
+  mutation toggleTipActiveStatus($code: Int!) {
+    toggleTipActiveStatus(code: $code) {
+      code
+    }
+  }
+`;
+
+const UPDATE_TIP_BlOG = gql`
+  mutation setTipBlogTrans($input: SetBlogTransToTipArgs!) {
+    setBlogTransToTip(input: $input) {
+      code
+    }
+  }
+`;
+
+const UPDATE_TIP_IMAGE = gql`
+  mutation setTipImage($input: SetTipImageArgs!) {
+    setTipImage(input: $input) {
+      code
+      imageUrl
+    }
+  }
+`;
+
+interface CustomUpdateTipArgs {
+  code: number;
+  title?: string;
+  blogTransCode?: number;
+  toggleActive?: boolean;
+  imageUrl?: string;
+}
+
+function useTipUpdateMutation() {
+  const [updateTipTitle] = useMutation<Mutation, MutationUpdateTipArgs>(
+    UPDATE_TIP_TITLE
+  );
+  const [updateTipImage] = useMutation<Mutation, MutationSetTipImageArgs>(
+    UPDATE_TIP_IMAGE
+  );
+  const [updateTipBlog] = useMutation<Mutation, MutationSetBlogTransToTipArgs>(
+    UPDATE_TIP_BlOG
+  );
+
+  const [updateTipActive] = useMutation<
     Mutation,
     MutationToggleTipActiveStatusArgs
-  >(TOGGLE_TIP_ACTIVE);
+  >(UPDATE_TIP_ACTIVE);
 
-  const toggleTipActive = (code: number) => toggle({
-    variables: {
-      code,
-    },
-  });
-
-  const res = data?.toggleTipActiveStatus;
-
-  return {
-    res,
-    loading,
-    error,
-    toggleTipActive,
+  const updateTip = ({
+    title,
+    code,
+    blogTransCode,
+    toggleActive,
+    imageUrl,
+  }: CustomUpdateTipArgs) => {
+    const promiseArr = [];
+    if (title !== undefined) {
+      promiseArr.push(
+        updateTipTitle({ variables: { input: { tipCode: code, title } } })
+      );
+    }
+    if (blogTransCode !== undefined) {
+      promiseArr.push(
+        updateTipBlog({
+          variables: { input: { tipCode: code, blogTransCode } },
+        })
+      );
+    }
+    if (toggleActive !== undefined) {
+      promiseArr.push(updateTipActive({ variables: { code } }));
+    }
+    if (imageUrl !== undefined) {
+      promiseArr.push(
+        updateTipImage({
+          variables: {
+            input: {
+              tipCode: code,
+              imageUrl,
+            },
+          },
+        })
+      );
+    }
+    console.log(promiseArr);
+    return Promise.all(promiseArr);
   };
+
+  return { updateTip };
 }
 
 const CREATE_TIP = gql`
@@ -83,11 +158,12 @@ function useCreateTipMutation() {
     MutationCreateTipArgs
   >(CREATE_TIP);
 
-  const createTip = (input: CreateTipArgs) => create({
-    variables: {
-      input,
-    },
-  });
+  const createTip = (input: CreateTipArgs) =>
+    create({
+      variables: {
+        input,
+      },
+    });
 
   return {
     createTip,
@@ -97,8 +173,4 @@ function useCreateTipMutation() {
   };
 }
 
-export {
-  useDeleteTipMutation,
-  useToggleTipActiveMutation,
-  useCreateTipMutation,
-};
+export { useDeleteTipMutation, useTipUpdateMutation, useCreateTipMutation };

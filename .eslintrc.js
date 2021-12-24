@@ -15,22 +15,21 @@ module.exports = {
   },
   settings: {
     "import/resolver": {
-      node: {
-        extensions: [".js", ".jsx", ".ts", ".tsx"],
-      },
+      typescript: {},
     },
   },
-  plugins: ["react", "@typescript-eslint"],
+  plugins: ["react", "@typescript-eslint", "prettier"],
   extends: [
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:import/typescript",
-    "prettier",
+    "plugin:prettier/recommended",
     "airbnb-base",
   ],
   ignorePatterns: ["dist/", "node_modules/", "src/graphql-types.ts"],
   rules: {
+    camelcase: "off",
     quotes: [2, "double", { avoidEscape: true }],
     "import/extensions": [
       "error",
@@ -41,6 +40,8 @@ module.exports = {
       },
     ],
     "no-undef": "off",
+    "object-curly-newline": "off",
+    "implicit-arrow-linebreak": "off",
     "react/jsx-uses-react": "off",
     "comma-dangle": "off",
     "no-param-reassign": "off",

@@ -1,23 +1,26 @@
 import { Select, Spin } from "antd";
+
+import { removeUnusedProperty } from "../../../util/form";
 import {
   CustomInputProps,
-  SelectSearchFormInfo,
   SelectSearchInputProps,
-} from "../../../types/form";
-import { removeUnusedProperty } from "../../../util/form";
+} from "../../../types/form/inputProps";
+import { SelectSearchFormInfo } from "../../../types/form/formInfos";
 
 export default function SelectSearchInput({
   keyAndName,
   options,
   onSearch,
   onOptionClick,
+  initialValue,
   ...selectSearchProps
-}: SelectSearchInputProps &
-  SelectSearchFormInfo &
+}: SelectSearchFormInfo &
+  SelectSearchInputProps &
   CustomInputProps): JSX.Element {
   return (
     <Select
       key={keyAndName}
+      defaultValue={initialValue?.label}
       showSearch
       filterOption={false}
       options={options}
@@ -25,7 +28,7 @@ export default function SelectSearchInput({
       onBlur={() => onSearch("")}
       onSelect={(_, option) => {
         if (option) {
-          onOptionClick({ value: option.value, label: `${option.label}` });
+          onOptionClick?.({ value: option.value, label: `${option.label}` });
         }
       }}
       notFoundContent={!options ? <Spin size="small" /> : null}

@@ -17,7 +17,7 @@ const PRE_SIGNED_URL_FOR_UPLOAD = gql`
   }
 `;
 
-export default function usePreSignedUrlForUploadQuery() {
+function usePreSignedUrlForUploadQuery() {
   const [getUrl, { loading, error, data }] = useLazyQuery<
     Query,
     QueryPreSignedUrlForUploadArgs
@@ -40,4 +40,5 @@ export default function usePreSignedUrlForUploadQuery() {
   };
 }
 
+// eslint-disable-next-line import/prefer-default-export
 export { usePreSignedUrlForUploadQuery };
