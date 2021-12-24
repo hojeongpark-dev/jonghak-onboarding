@@ -16,6 +16,13 @@ export type TextFormInfo = SharedFormInfo & {
   style?: React.CSSProperties;
 };
 
+export type NumberFormInfo = SharedFormInfo & {
+  formType: FormType.NUMBER;
+  placeholder?: string;
+  initialValue?: number;
+  style?: React.CSSProperties;
+};
+
 export type RadioFormInfo = SharedFormInfo & {
   formType: FormType.RADIO;
   initialValue?: RadioItem;
@@ -43,6 +50,7 @@ export type DatePickerFormInfo = SharedFormInfo & {
 
 export type FormInfos =
   | TextFormInfo
+  | NumberFormInfo
   | SelectSearchFormInfo
   | RadioFormInfo
   | ImageFormInfo

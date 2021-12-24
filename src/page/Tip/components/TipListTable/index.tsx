@@ -1,6 +1,6 @@
 import { Button, Switch } from "antd";
-import React from "react";
 import { Link } from "react-router-dom";
+import { Fragment } from "react";
 import { TipPage } from "../../../../graphql-types";
 import TableList from "../../../../components/common/Table";
 import { URLS } from "../../../../constants/urls";
@@ -48,7 +48,7 @@ export default function TipListTable({
           key: "createdAt",
           width: 120,
           render: (createdAt, { code }) => (
-            <React.Fragment key={code}>{dateFormat(createdAt)}</React.Fragment>
+            <Fragment key={code}>{dateFormat(createdAt)}</Fragment>
           ),
         },
         {

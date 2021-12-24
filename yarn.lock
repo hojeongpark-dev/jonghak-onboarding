@@ -2409,6 +2409,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/moment@npm:^2.13.0":
+  version: 2.13.0
+  resolution: "@types/moment@npm:2.13.0"
+  dependencies:
+    moment: "*"
+  checksum: 0bb9e73c0c961a1112ba67773779c3a84edca5063660e79f8b104bc0857dc53447f93e7ac3df78924d17e7e0a87c9ccc9e87505308798c9495ac6de278af7305
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:*, @types/node@npm:^17.0.2":
   version: 17.0.4
   resolution: "@types/node@npm:17.0.4"
@@ -6802,6 +6811,7 @@ __metadata:
     "@graphql-codegen/typescript": ^2.4.1
     "@graphql-codegen/typescript-operations": ^2.2.1
     "@reduxjs/toolkit": ^1.7.1
+    "@types/moment": ^2.13.0
     "@types/node": ^17.0.2
     "@types/react": ^17.0.37
     "@types/react-dom": ^17.0.11
@@ -6830,6 +6840,8 @@ __metadata:
     html-loader: ^3.0.1
     html-webpack-plugin: ^5.5.0
     immer: ^9.0.7
+    moment: ^2.29.1
+    moment-es6: ^1.0.0
     prettier: ^2.5.1
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -7631,7 +7643,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moment@npm:^2.24.0, moment@npm:^2.25.3":
+"moment-es6@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "moment-es6@npm:1.0.0"
+  dependencies:
+    moment: "*"
+  checksum: eb9c7f9709670ff3c41a84bf999f404ab2cc10db99b4c30e906013805dec039cbe731cc70ae2213a3c97bd7d30555f0e582b9acda37554ea31a1e9f8b2f2ebb5
+  languageName: node
+  linkType: hard
+
+"moment@npm:*, moment@npm:^2.24.0, moment@npm:^2.25.3, moment@npm:^2.29.1":
   version: 2.29.1
   resolution: "moment@npm:2.29.1"
   checksum: 1e14d5f422a2687996be11dd2d50c8de3bd577c4a4ca79ba5d02c397242a933e5b941655de6c8cb90ac18f01cc4127e55b4a12ae3c527a6c0a274e455979345e

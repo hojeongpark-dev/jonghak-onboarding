@@ -40,6 +40,7 @@ module.exports = {
       },
     ],
     "no-undef": "off",
+    "no-confusing-arrow": "off",
     "object-curly-newline": "off",
     "implicit-arrow-linebreak": "off",
     "react/jsx-uses-react": "off",

@@ -1,5 +1,4 @@
 import { gql, useMutation } from "@apollo/client";
-import { Simulate } from "react-dom/test-utils";
 import {
   CreateTipArgs,
   Mutation,
@@ -10,7 +9,7 @@ import {
   MutationToggleTipActiveStatusArgs,
   MutationUpdateTipArgs,
 } from "../../graphql-types";
-import { Tip } from "../../graphql/fragments";
+import { TipFragment } from "../../graphql/fragments";
 
 const DELETE_TIP = gql`
   mutation deleteTip($code: Int!) {
@@ -42,7 +41,7 @@ function useDeleteTipMutation() {
 }
 
 const UPDATE_TIP_TITLE = gql`
-  ${Tip}
+  ${TipFragment}
   mutation updateTip($input: UpdateTipArgs!) {
     updateTip(input: $input) {
       ...TipTable_tip
@@ -134,7 +133,6 @@ function useTipUpdateMutation() {
         })
       );
     }
-    console.log(promiseArr);
     return Promise.all(promiseArr);
   };
 

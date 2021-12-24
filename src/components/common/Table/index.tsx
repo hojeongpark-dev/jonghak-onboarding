@@ -1,4 +1,3 @@
-import React from "react";
 import { Table } from "antd";
 import { TableProps } from "antd/lib/table/Table";
 import { DEFAULT_LIMIT_SIZE } from "../../../constants/list";
@@ -16,7 +15,7 @@ export default function TableList<T extends object>({
   return loading ? (
     <LoadingSpinner />
   ) : (
-    <Table
+    <Table<T>
       pagination={{
         pageSize: DEFAULT_LIMIT_SIZE,
         ...pagination,

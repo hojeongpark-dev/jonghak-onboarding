@@ -12,8 +12,8 @@ import { SelectOptionItem } from "../../../../types/form/inputProps";
 import { FormType } from "../../../../types/form/formType";
 import s3Upload from "../../../../network/s3Upload";
 import { getErrorDescription } from "../../../../network/error";
-import { useTipUpdateMutation } from "../../../../apis/tip/useTipMutations";
-import { usePreSignedUrlForUploadQuery } from "../../../../apis/preSignedUrl/usePreSignedQueries";
+import { useTipUpdateMutation } from "../../../../apiHooks/tip/useTipMutations";
+import { usePreSignedUrlForUploadQuery } from "../../../../apiHooks/preSignedUrl/usePreSignedQueries";
 
 function getAfterValueWhenDiff<T>(before: T, after: T): T | undefined {
   return before === after ? undefined : after;
@@ -107,9 +107,9 @@ export default function TipDetailForms({
 
   return (
     <Flex flexDirection={"row-reverse"} mt={20}>
-      <RightButton label={"저장하기"} onClick={formik.handleSubmit} />
+      <RightButton label={STRING.SAVE} onClick={formik.handleSubmit} />
       <FormLayout>
-        <DescriptionRow label={"제목"}>
+        <DescriptionRow label={STRING.TITLE}>
           <Form.title value={formik.values.title} />
         </DescriptionRow>
         <DescriptionRow label={"공개여부"}>

@@ -15,6 +15,11 @@ export interface TextInputProps {
   onChange?: ChangeEventHandler<HTMLInputElement>;
 }
 
+export interface NumberInputProps {
+  value?: number;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
+}
+
 export interface RadioInputProps {
   radios: RadioItem[];
   onChange?: (e: RadioChangeEvent) => void;

@@ -17,11 +17,13 @@ import { FormInfo } from "../types/form/formInfos";
 import { FormType } from "../types/form/formType";
 import {
   ImageUploadInputProps,
+  NumberInputProps,
   RadioInputProps,
   SelectSearchInputProps,
   TextInputProps,
   ToggleInputProps,
 } from "../types/form/inputProps";
+import NumberInput from "../components/forms/NumberInput";
 
 export default function useForm<F extends FormInfo>({
   formInfo,
@@ -52,7 +54,8 @@ export default function useForm<F extends FormInfo>({
   }, []);
 
   const formik = useFormik({
-    onSubmit,
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    onSubmit: onSubmit || (() => {}),
     initialValues,
     validationSchema,
     validateOnMount: true,
@@ -67,12 +70,24 @@ export default function useForm<F extends FormInfo>({
         let InputElement;
 
         switch (formDetail.formType) {
-          // case FormType.NUMBER:
           // case FormType.MULTILINE_TEXT:
           case FormType.TEXT:
           case FormType.PASSWORD:
             InputElement = ({ onChange, ...props }: TextInputProps) => (
               <TextInput
+                keyAndName={keyAndName}
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  onChange?.(e);
+                }}
+                {...props}
+                {...formDetail}
+              />
+            );
+            break;
+          case FormType.NUMBER:
+            InputElement = ({ onChange, ...props }: NumberInputProps) => (
+              <NumberInput
                 keyAndName={keyAndName}
                 onChange={(e) => {
                   formik.handleChange(e);

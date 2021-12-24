@@ -6,32 +6,23 @@ import { toast } from "react-toastify";
 import useForm from "../../../../hooks/useForm";
 import STRING from "../../../../constants/strings";
 import { languageCategoriesKo } from "../../constants";
-import useBlogForSearchQuery from "../../../../apis/blog/useBlogForSearchQuery";
+import useBlogForSearchQuery from "../../../../apiHooks/blog/useBlogForSearchQuery";
 import recordToArray from "../../../../util/record";
 import { LanguageType } from "../../../../graphql-types";
-import { useCreateTipMutation } from "../../../../apis/tip/useTipMutations";
+import { useCreateTipMutation } from "../../../../apiHooks/tip/useTipMutations";
 import { getErrorDescription } from "../../../../network/error";
-import { usePreSignedUrlForUploadQuery } from "../../../../apis/preSignedUrl/usePreSignedQueries";
+import { usePreSignedUrlForUploadQuery } from "../../../../apiHooks/preSignedUrl/usePreSignedQueries";
 import s3Upload from "../../../../network/s3Upload";
 import DescriptionRow from "../../../../components/forms/DescriptionRow";
 import CustomModal from "../../../../components/common/CustomModal";
 import { FormType } from "../../../../types/form/formType";
+import { ModalProps } from "../../../../types/modal";
 
 const languageRadios = recordToArray(languageCategoriesKo).map(
   ([key, label]) => ({ label, key })
 );
 
-interface NewTipModalProps {
-  isVisible: boolean;
-  onClose: () => void;
-  afterCreate: () => void;
-}
-
-function NewTipModal({
-  isVisible,
-  onClose,
-  afterCreate,
-}: NewTipModalProps): JSX.Element {
+function NewTipModal({ isVisible, onClose, afterOk }: ModalProps): JSX.Element {
   const [language, setLanguage] = useState<LanguageType>("KOREAN");
   const [uploadImage, setUploadImage] = useState<File | null>(null);
 
@@ -75,7 +66,7 @@ function NewTipModal({
           imageUrl,
         });
         toast.success(STRING.CREATE_SUCCESS);
-        afterCreate();
+        afterOk?.();
         onClose();
       } catch (e) {
         toast.error(getErrorDescription(e));

@@ -1,7 +1,7 @@
 import { useImmer } from "use-immer";
 import { toast } from "react-toastify";
 import Flex from "../../components/layout/styled/Flex";
-import useTipsQuery from "../../apis/tip/useTipsQuery";
+import useTipsQuery from "../../apiHooks/tip/useTipsQuery";
 import { LanguageType, QueryTipsArgs } from "../../graphql-types";
 import { languageCategoriesKo } from "./constants";
 import CategoryFilter from "../../components/common/CategoryFilter";
@@ -12,7 +12,7 @@ import TipListTable from "./components/TipListTable";
 import {
   useDeleteTipMutation,
   useTipUpdateMutation,
-} from "../../apis/tip/useTipMutations";
+} from "../../apiHooks/tip/useTipMutations";
 import { getErrorDescription } from "../../network/error";
 import { DEFAULT_LIMIT_SIZE } from "../../constants/list";
 import useToggle from "../../hooks/useToggle";
@@ -97,7 +97,7 @@ function Tip(): JSX.Element {
       <NewTipModal
         key={modalKey}
         onClose={toggleModalVisible}
-        afterCreate={refreshTips}
+        afterOk={refreshTips}
         isVisible={modalVisible}
       />
     </>

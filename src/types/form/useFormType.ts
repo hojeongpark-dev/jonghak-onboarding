@@ -2,6 +2,7 @@ import { AnySchema } from "yup/lib/schema";
 import Reference from "yup/lib/Reference";
 import {
   ImageUploadInputProps,
+  NumberInputProps,
   RadioInputProps,
   SelectSearchInputProps,
   TextInputProps,
@@ -14,6 +15,7 @@ type TextComponent = (props: TextInputProps) => JSX.Element;
 type RadioComponent = (props: RadioInputProps) => JSX.Element;
 type ImageUploadComponent = (props: ImageUploadInputProps) => JSX.Element;
 type ToggleComponent = (props: ToggleInputProps) => JSX.Element;
+type NumberComponent = (props: NumberInputProps) => JSX.Element;
 type SelectSearchComponent = (props: SelectSearchInputProps) => JSX.Element;
 
 export type FormComponents<Form extends FormInfo> = {
@@ -25,6 +27,8 @@ export type FormComponents<Form extends FormInfo> = {
     ? ImageUploadComponent
     : Form[Name]["formType"] extends FormType.TOGGLE
     ? ToggleComponent
+    : Form[Name]["formType"] extends FormType.NUMBER
+    ? NumberComponent
     : TextComponent;
 };
 
@@ -38,5 +42,5 @@ export type InitialValue<Form extends FormInfo> = {
 
 export interface UseFormArgs<F extends FormInfo> {
   formInfo: F;
-  onSubmit: (value: InitialValue<F>) => void;
+  onSubmit?: (value: InitialValue<F>) => void;
 }

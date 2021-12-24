@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import useMyInfoQuery from "../apis/myInfo/useMyInfoQuery";
+import useMyInfoQuery from "../apiHooks/myInfo/useMyInfoQuery";
 import { useAppDispatch } from "../redux/store";
 import { authActions } from "../redux/slice/auth";
 import { getErrorDescription } from "../network/error";

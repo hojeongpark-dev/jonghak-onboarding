@@ -1,12 +1,12 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
-import useTipQuery from "../../apis/tip/useTipQuery";
+import useTipQuery from "../../apiHooks/tip/useTipQuery";
 import { URLS } from "../../constants/urls";
 import CenterLayout from "../../components/layout/styled/CenterLayout";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import CategoryFilter from "../../components/common/CategoryFilter";
 import { languageCategoriesKo } from "../Tip/constants";
-import useBlogForSearchQuery from "../../apis/blog/useBlogForSearchQuery";
+import useBlogForSearchQuery from "../../apiHooks/blog/useBlogForSearchQuery";
 import TipDetailForms from "./components/TipDetailForms";
 
 function Loading() {
@@ -35,6 +35,7 @@ export default function TipDetail(): JSX.Element {
   return (
     <>
       <CategoryFilter
+        defaultSelectedKeys={[tip.language]}
         categories={{ [tip.language]: languageCategoriesKo[tip.language] }}
       />
       <TipDetailForms

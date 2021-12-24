@@ -43,6 +43,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@graphql-codegen/typescript", "virtual:ed3a4f66885c83165a04473962345902e92e09bf138e5e162ad842664e89457c28cd10edfee9526c99184bf3636f4392bdc63b9bee2ec94afc1126d372c5f816#npm:2.4.1"],
             ["@graphql-codegen/typescript-operations", "virtual:ed3a4f66885c83165a04473962345902e92e09bf138e5e162ad842664e89457c28cd10edfee9526c99184bf3636f4392bdc63b9bee2ec94afc1126d372c5f816#npm:2.2.1"],
             ["@reduxjs/toolkit", "virtual:ed3a4f66885c83165a04473962345902e92e09bf138e5e162ad842664e89457c28cd10edfee9526c99184bf3636f4392bdc63b9bee2ec94afc1126d372c5f816#npm:1.7.1"],
+            ["@types/moment", "npm:2.13.0"],
             ["@types/node", "npm:17.0.4"],
             ["@types/react", "npm:17.0.38"],
             ["@types/react-dom", "npm:17.0.11"],
@@ -71,6 +72,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["html-loader", "virtual:ed3a4f66885c83165a04473962345902e92e09bf138e5e162ad842664e89457c28cd10edfee9526c99184bf3636f4392bdc63b9bee2ec94afc1126d372c5f816#npm:3.0.1"],
             ["html-webpack-plugin", "virtual:ed3a4f66885c83165a04473962345902e92e09bf138e5e162ad842664e89457c28cd10edfee9526c99184bf3636f4392bdc63b9bee2ec94afc1126d372c5f816#npm:5.5.0"],
             ["immer", "npm:9.0.7"],
+            ["moment", "npm:2.29.1"],
+            ["moment-es6", "npm:1.0.0"],
             ["prettier", "npm:2.5.1"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:ed3a4f66885c83165a04473962345902e92e09bf138e5e162ad842664e89457c28cd10edfee9526c99184bf3636f4392bdc63b9bee2ec94afc1126d372c5f816#npm:17.0.2"],
@@ -3932,6 +3935,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-mime-npm-1.3.2-ea71878ab3-0493368244.zip/node_modules/@types/mime/",
           "packageDependencies": [
             ["@types/mime", "npm:1.3.2"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@types/moment", [
+        ["npm:2.13.0", {
+          "packageLocation": "./.yarn/cache/@types-moment-npm-2.13.0-0061c2ab5d-0bb9e73c0c.zip/node_modules/@types/moment/",
+          "packageDependencies": [
+            ["@types/moment", "npm:2.13.0"],
+            ["moment", "npm:2.29.1"]
           ],
           "linkType": "HARD",
         }]
@@ -9400,6 +9413,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@graphql-codegen/typescript", "virtual:ed3a4f66885c83165a04473962345902e92e09bf138e5e162ad842664e89457c28cd10edfee9526c99184bf3636f4392bdc63b9bee2ec94afc1126d372c5f816#npm:2.4.1"],
             ["@graphql-codegen/typescript-operations", "virtual:ed3a4f66885c83165a04473962345902e92e09bf138e5e162ad842664e89457c28cd10edfee9526c99184bf3636f4392bdc63b9bee2ec94afc1126d372c5f816#npm:2.2.1"],
             ["@reduxjs/toolkit", "virtual:ed3a4f66885c83165a04473962345902e92e09bf138e5e162ad842664e89457c28cd10edfee9526c99184bf3636f4392bdc63b9bee2ec94afc1126d372c5f816#npm:1.7.1"],
+            ["@types/moment", "npm:2.13.0"],
             ["@types/node", "npm:17.0.4"],
             ["@types/react", "npm:17.0.38"],
             ["@types/react-dom", "npm:17.0.11"],
@@ -9428,6 +9442,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["html-loader", "virtual:ed3a4f66885c83165a04473962345902e92e09bf138e5e162ad842664e89457c28cd10edfee9526c99184bf3636f4392bdc63b9bee2ec94afc1126d372c5f816#npm:3.0.1"],
             ["html-webpack-plugin", "virtual:ed3a4f66885c83165a04473962345902e92e09bf138e5e162ad842664e89457c28cd10edfee9526c99184bf3636f4392bdc63b9bee2ec94afc1126d372c5f816#npm:5.5.0"],
             ["immer", "npm:9.0.7"],
+            ["moment", "npm:2.29.1"],
+            ["moment-es6", "npm:1.0.0"],
             ["prettier", "npm:2.5.1"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:ed3a4f66885c83165a04473962345902e92e09bf138e5e162ad842664e89457c28cd10edfee9526c99184bf3636f4392bdc63b9bee2ec94afc1126d372c5f816#npm:17.0.2"],
@@ -10343,6 +10359,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         ["npm:2.29.1", {
           "packageLocation": "./.yarn/cache/moment-npm-2.29.1-787d9fdafd-1e14d5f422.zip/node_modules/moment/",
           "packageDependencies": [
+            ["moment", "npm:2.29.1"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["moment-es6", [
+        ["npm:1.0.0", {
+          "packageLocation": "./.yarn/cache/moment-es6-npm-1.0.0-4c9ce39605-eb9c7f9709.zip/node_modules/moment-es6/",
+          "packageDependencies": [
+            ["moment-es6", "npm:1.0.0"],
             ["moment", "npm:2.29.1"]
           ],
           "linkType": "HARD",

@@ -1,9 +1,9 @@
 import { gql, useQuery } from "@apollo/client";
 import { Query, QueryTipArgs } from "../../graphql-types";
-import { Tip } from "../../graphql/fragments";
+import { TipFragment } from "../../graphql/fragments";
 
 const TIP = gql`
-  ${Tip}
+  ${TipFragment}
   query tip($code: Int!) {
     tip(code: $code) {
       ...TipTable_tip
