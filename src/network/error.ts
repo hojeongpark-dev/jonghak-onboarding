@@ -32,9 +32,7 @@ export const getNetworkErrorDescription = (error: NetworkError) =>
 
 export const getErrorDescription = (error: unknown) => {
   const { graphQLErrors, networkError } = error as ApolloError;
-  if (graphQLErrors.length > 0) {
-    return graphQLErrors.map(getGraphQlErrorDescription).join("\n");
-  }
+  if (graphQLErrors.length > 0) return graphQLErrors.map(getGraphQlErrorDescription).join("\n");
   if (networkError) return getNetworkErrorDescription(networkError);
   return (error as Error).toString();
 };

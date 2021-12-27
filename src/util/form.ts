@@ -1,7 +1,9 @@
 import { FormInfos } from "../types/form/formInfos";
 
 // eslint-disable-next-line import/prefer-default-export
-export function removeUnusedProperty(form: FormInfos) {
+export const removeUnusedProperty = (
+  form: FormInfos
+): Omit<FormInfos, "initialValue" | "formType" | "validator"> => {
   const {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     initialValue,
@@ -12,4 +14,4 @@ export function removeUnusedProperty(form: FormInfos) {
     ...rest
   } = form;
   return rest;
-}
+};

@@ -1,4 +1,3 @@
-import React from "react";
 import { render } from "react-dom";
 import { Provider } from "react-redux";
 import { ApolloProvider } from "@apollo/client";
@@ -18,7 +17,7 @@ function Index(): JSX.Element {
       <Provider store={store}>
         <App />
       </Provider>
-      <ToastContainer {...toastOptions}/>
+      <ToastContainer {...toastOptions} />
     </ApolloProvider>
   );
 }

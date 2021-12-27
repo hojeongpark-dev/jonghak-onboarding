@@ -23,12 +23,8 @@ export default function ImageUploadInput({
 }: ImageUploadInputProps & ImageFormInfo & CustomInputProps): JSX.Element {
   const [previewImageUrl, setPreviewImageUrl] = useState(srcUrl);
 
-  const makePreviewImage = (file?: RcFile) => {
-    if (file) {
-      const previewURL = URL.createObjectURL(file);
-      setPreviewImageUrl(previewURL);
-    }
-  };
+  const makePreviewImage = (file?: RcFile) =>
+    setPreviewImageUrl(file && URL.createObjectURL(file));
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function,no-underscore-dangle
   const _unUsedRequest = () => {};

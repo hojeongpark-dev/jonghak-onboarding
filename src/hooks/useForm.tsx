@@ -1,6 +1,6 @@
-import { object } from "yup";
 import { Fragment, useMemo } from "react";
 import { useFormik } from "formik";
+import { object } from "yup";
 import recordToArray from "../util/record";
 import TextInput from "../components/forms/TextInput";
 import RadioInput from "../components/forms/RadioInput";
@@ -35,27 +35,29 @@ export default function useForm<F extends FormInfo>({
 }: UseFormArgs<F>) {
   const initialValues = useMemo(
     () =>
-      Object.keys(formInfo).reduce(
-        (initials, key) => ({
-          ...initials,
-          [key]: formInfo[key].initialValue ?? "",
+      recordToArray(formInfo).reduce(
+        (initialBody, [key, { initialValue }]) => ({
+          ...initialBody,
+          [key]: initialValue,
         }),
-        {}
-      ) as InitialValues<F>,
+        {} as InitialValues<F>
+      ),
     []
   );
 
-  const validationSchema = useMemo(() => {
-    const schemaBody: ValidatorType = {};
-    Object.keys(formInfo).forEach((key) => {
-      const { validator } = formInfo[key];
-      if (validator) {
-        schemaBody[key] = validator;
-      }
-    });
-    const isEmpty = Object.keys(schemaBody).length === 0;
-    return isEmpty ? undefined : object().shape(schemaBody);
-  }, []);
+  const validationSchema = useMemo(
+    () =>
+      object().shape(
+        recordToArray(formInfo).reduce(
+          (schemaBody, [key, { validator }]) => ({
+            ...schemaBody,
+            ...(validator && { [key]: validator }),
+          }),
+          {} as ValidatorType<F>
+        )
+      ),
+    []
+  );
 
   const formik = useFormik({
     // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -133,11 +135,11 @@ export default function useForm<F extends FormInfo>({
               ...props
             }: SelectSearchInputProps) => (
               <SelectSearchInput
+                keyAndName={keyAndName}
                 onOptionClick={(target) => {
                   formik.setFieldValue(`${name}`, target);
                   onOptionClick?.(target);
                 }}
-                keyAndName={keyAndName}
                 {...props}
                 {...formDetail}
               />

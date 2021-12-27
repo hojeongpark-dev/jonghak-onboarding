@@ -21,19 +21,17 @@ export default function SelectSearchInput({
   return (
     <Select
       key={keyAndName}
-      defaultValue={initialValue?.label}
       showSearch
-      filterOption={false}
       options={options}
       onSearch={onSearch}
-      onBlur={() => onSearch(STRING.EMPTY)}
-      onSelect={(_, option) => {
-        if (option) {
-          onOptionClick?.({ value: option.value, label: `${option.label}` });
-        }
-      }}
-      notFoundContent={!options ? <Spin size="small" /> : null}
+      filterOption={false}
       style={{ width: "100%" }}
+      defaultValue={initialValue?.label}
+      onBlur={() => onSearch(STRING.EMPTY)}
+      notFoundContent={!options ? <Spin size="small" /> : null}
+      onSelect={(_, option) => {
+        onOptionClick?.({ value: option.value, label: `${option.label}` });
+      }}
       {...removeUnusedProperty(selectSearchProps)}
     />
   );

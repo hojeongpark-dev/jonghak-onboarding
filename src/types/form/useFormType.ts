@@ -52,8 +52,8 @@ export type FormComponents<F extends FormInfo> = {
     : TextComponent;
 };
 
-export type ValidatorType = {
-  [key: string]: AnySchema | Reference;
+export type ValidatorType<F extends FormInfo> = {
+  [K in keyof F]: AnySchema | Reference;
 };
 
 export type InitialValues<F extends FormInfo> = {
