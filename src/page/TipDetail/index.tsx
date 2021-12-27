@@ -1,29 +1,53 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
+import { useImmer } from "use-immer";
 import useTipQuery from "../../apiHooks/tip/useTipQuery";
 import { URLS } from "../../constants/urls";
-import CenterLayout from "../../components/layout/styled/CenterLayout";
-import LoadingSpinner from "../../components/common/LoadingSpinner";
 import CategoryFilter from "../../components/common/CategoryFilter";
 import { languageCategoriesKo } from "../Tip/constants";
 import useBlogForSearchQuery from "../../apiHooks/blog/useBlogForSearchQuery";
 import TipDetailForms from "./components/TipDetailForms";
-
-function Loading() {
-  return (
-    <CenterLayout>
-      <LoadingSpinner />
-    </CenterLayout>
-  );
-}
+import Loading from "../../components/common/Loading";
+import { DEFAULT_LIMIT_SIZE, INITIAL_PAGE_INDEX } from "../../constants/list";
+import STRING from "../../constants/strings";
+import useWhenUpdate from "../../hooks/useWhenUpdate";
+import { ErrorToast } from "../../toast";
 
 export default function TipDetail(): JSX.Element {
   const { code } = useParams();
   const navigate = useNavigate();
-  const { tip, refresh, error, loading } = useTipQuery({ code: Number(code) });
-  const { blogOptions, setBlogSearchKeyword } = useBlogForSearchQuery(
-    tip?.language
-  );
+  const {
+    tip,
+    refetch: refetchTip,
+    error,
+    loading,
+  } = useTipQuery(Number(code));
+
+  const tipLanguage = tip?.language || "KOREAN";
+
+  const [blogQueryArgs, setBlogQueryArgs] = useImmer({
+    input: {
+      limit: DEFAULT_LIMIT_SIZE,
+      page: INITIAL_PAGE_INDEX,
+      filter: {
+        title: STRING.EMPTY,
+        language: tipLanguage,
+      },
+    },
+    language: tipLanguage,
+  });
+  const { blogOptions, refetch: refetchBlog } =
+    useBlogForSearchQuery(blogQueryArgs);
+
+  const handleBlogSearchKeywordChange = (keyword: string) => {
+    setBlogQueryArgs((prev) => {
+      prev.input.filter.title = keyword;
+    });
+  };
+
+  useWhenUpdate(() => {
+    refetchBlog(blogQueryArgs).catch(ErrorToast);
+  }, [blogQueryArgs]);
 
   useEffect(() => {
     if (error) navigate(URLS.TIP);
@@ -40,9 +64,9 @@ export default function TipDetail(): JSX.Element {
       />
       <TipDetailForms
         tip={tip}
-        onUpdate={() => refresh(Number(code))}
         blogOptions={blogOptions}
-        onSearch={setBlogSearchKeyword}
+        onUpdate={refetchTip}
+        onBlogSearch={handleBlogSearchKeywordChange}
       />
     </>
   );

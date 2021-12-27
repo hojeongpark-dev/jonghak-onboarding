@@ -1,4 +1,4 @@
-import { Button, Popconfirm, Popover, Switch } from "antd";
+import { Button, Popconfirm, TablePaginationConfig } from "antd";
 import { Link } from "react-router-dom";
 import { Fragment } from "react";
 import {
@@ -13,21 +13,53 @@ import {
   EVENT_TYPE_TO_KO,
 } from "../../../../constants/enumToString";
 import { URLS } from "../../../../constants/urls";
-import { dateFormat } from "../../../../util/date";
+import { dateToVisibleFormat } from "../../../../util/date";
 import NotYetSwitch from "../../../../components/spotEvent/NotYetSwitch";
 import OngoingSwitch from "../../../../components/spotEvent/OngoingSwitch";
+import {
+  useCloseSpotEventMutations,
+  useDeleteSpotEventMutations,
+} from "../../../../apiHooks/spotEvent/useSpotEventMutations";
+import { ErrorToast } from "../../../../toast";
 
 interface EventSpotListTableProps {
-  events?: SpotEventPage;
   loading: boolean;
-  onEventDelete: (code: number) => void;
+  refetch: () => void;
+  events?: SpotEventPage;
+  onPageChange: (page: number) => void;
 }
 
 export default function EventSpotListTable({
   events,
   loading,
-  onEventDelete,
+  refetch,
+  onPageChange,
 }: EventSpotListTableProps): JSX.Element {
+  const { deleteSpotEvent } = useDeleteSpotEventMutations();
+  const { closeSpotEvent } = useCloseSpotEventMutations();
+
+  const handleEventDelete = async (code: number) => {
+    try {
+      await deleteSpotEvent(code);
+      await refetch();
+    } catch (e) {
+      ErrorToast(e);
+    }
+  };
+
+  const handleEventClose = async (code: number) => {
+    try {
+      await closeSpotEvent(code);
+      await refetch();
+    } catch (e) {
+      ErrorToast(e);
+    }
+  };
+
+  const handlePageChange = ({ current }: TablePaginationConfig) => {
+    if (current) onPageChange(current);
+  };
+
   return (
     <TableList
       loading={loading}
@@ -53,7 +85,7 @@ export default function EventSpotListTable({
           render: (name, { code }) => (
             <Link
               key={code}
-              to={URLS.TRIP_EVENT_DETAIL.replace(":code", `${code}`)}
+              to={URLS.SPOT_EVENT_DETAIL.replace(":code", `${code}`)}
             >
               {name}
             </Link>
@@ -64,9 +96,9 @@ export default function EventSpotListTable({
           dataIndex: "start",
           width: 200,
           render: (start, { end, code }) => (
-            <Fragment key={code}>{`${dateFormat(start)} ~ ${dateFormat(
-              end
-            )}`}</Fragment>
+            <Fragment key={code}>{`${dateToVisibleFormat(
+              start
+            )} ~ ${dateToVisibleFormat(end)}`}</Fragment>
           ),
         },
         {
@@ -86,7 +118,7 @@ export default function EventSpotListTable({
           width: 100,
           render: (_, { status, code }) =>
             status === "ON_GOING" ? (
-              <OngoingSwitch code={code} onEventEnd={() => {}} />
+              <OngoingSwitch code={code} onEventClose={handleEventClose} />
             ) : (
               <NotYetSwitch />
             ),
@@ -96,10 +128,10 @@ export default function EventSpotListTable({
           width: 100,
           render: (_, { code }) => (
             <Popconfirm
-              title={STRING.DELETE_CONFIRM}
-              onConfirm={() => onEventDelete(code)}
               okText={STRING.CONFIRM}
               cancelText={STRING.CANCEL}
+              title={STRING.DELETE_CONFIRM}
+              onConfirm={() => handleEventDelete(code)}
             >
               <Button key={code}>{STRING.DELETE}</Button>
             </Popconfirm>
@@ -108,6 +140,7 @@ export default function EventSpotListTable({
       ]}
       rowKey="code"
       dataSource={events?.edges}
+      onChange={handlePageChange}
     />
   );
 }

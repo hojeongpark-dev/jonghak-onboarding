@@ -1,5 +1,4 @@
 import { DatePicker, Radio, RadioChangeEvent } from "antd";
-import moment from "moment-es6";
 import Flex from "../../../../components/layout/styled/Flex";
 import DescriptionRow from "../../../../components/forms/DescriptionRow";
 import recordToArray from "../../../../util/record";
@@ -8,17 +7,20 @@ import {
   EVENT_TYPE_TO_KO,
 } from "../../../../constants/enumToString";
 import RadioButtonGroup from "../../../../components/common/RadioButtonGroup";
-import { SpotEventStatusType, SpotEventType } from "../../../../graphql-types";
+import {
+  PeriodArgs,
+  SpotEventStatusType,
+  SpotEventType,
+} from "../../../../graphql-types";
 import STRING from "../../../../constants/strings";
-
-type RangeMoment = [moment.Moment, moment.Moment];
-
-const DATE_PICKER_PLACEHOLDER = "YYYY-MM-DD";
+import { RangeMoment } from "../../../../types/form/inputProps";
+import { DATE_PICKER_PLACEHOLDER } from "../../../../constants/etc";
+import { dateTimeFormat } from "../../../../util/date";
 
 interface EventSpotListFilterProps {
   onStatusChange: (status: SpotEventStatusType) => void;
   onTypeChange: (type: SpotEventType) => void;
-  onPeriodChange: (period: { start: string; end: string } | null) => void;
+  onPeriodChange: (period: PeriodArgs | null) => void;
 }
 
 export default function EventSpotListFilter({
@@ -37,16 +39,18 @@ export default function EventSpotListFilter({
   const handleEventPeriodChange = (range: RangeMoment | null) => {
     let period = null;
     if (range) {
-      const start = range[0].format("yyyy-MM-DDT00:00");
-      const end = range[1].format("yyyy-MM-DDT00:00");
-      period = { start, end };
+      const [from, to] = range;
+      period = {
+        start: dateTimeFormat(from, "start"),
+        end: dateTimeFormat(to, "end"),
+      };
     }
     onPeriodChange(period);
   };
 
   return (
     <Flex flexDirection={"column"} pt={20} pl={1}>
-      <DescriptionRow label={STRING.EVNET_TYPE}>
+      <DescriptionRow bordered={false} label={STRING.EVENT_TYPE}>
         <RadioButtonGroup onChange={handleEventTypeChange}>
           {recordToArray(EVENT_TYPE_TO_KO).map(([type, label]) => (
             <Radio.Button key={type} value={type}>
@@ -55,7 +59,7 @@ export default function EventSpotListFilter({
           ))}
         </RadioButtonGroup>
       </DescriptionRow>
-      <DescriptionRow label={STRING.EVNET_PERIOD}>
+      <DescriptionRow bordered={false} label={STRING.EVNET_PERIOD}>
         <DatePicker.RangePicker
           placeholder={[DATE_PICKER_PLACEHOLDER, DATE_PICKER_PLACEHOLDER]}
           onChange={(e) => handleEventPeriodChange(e as RangeMoment)}

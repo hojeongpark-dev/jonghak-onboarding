@@ -1,25 +1,59 @@
-import { Button, Switch } from "antd";
+import { Button, Switch, TablePaginationConfig } from "antd";
 import { Link } from "react-router-dom";
 import { Fragment } from "react";
+import { toast } from "react-toastify";
 import { TipPage } from "../../../../graphql-types";
 import TableList from "../../../../components/common/Table";
 import { URLS } from "../../../../constants/urls";
-import { dateFormat } from "../../../../util/date";
+import { dateToVisibleFormat } from "../../../../util/date";
 import STRING from "../../../../constants/strings";
+import { getErrorDescription } from "../../../../network/error";
+import {
+  useDeleteTipMutation,
+  useTipUpdateMutation,
+} from "../../../../apiHooks/tip/useTipMutations";
+import { ErrorToast, SuccessToast } from "../../../../toast";
 
 interface TipListTableProps {
   tips?: TipPage;
   loading: boolean;
-  onTipDelete: (code: number) => void;
-  onTipToggleActive: (code: number) => void;
+  refetch: () => void;
+  onPageChange: (page: number) => void;
 }
 
 export default function TipListTable({
   loading,
   tips,
-  onTipDelete,
-  onTipToggleActive,
+  refetch,
+  onPageChange,
 }: TipListTableProps): JSX.Element {
+  const { updateTip } = useTipUpdateMutation();
+  const { requestDelete } = useDeleteTipMutation();
+
+  const handleTipDelete = async (code: number) => {
+    try {
+      await requestDelete(code);
+      SuccessToast(STRING.DELETE_SUCCESS);
+      await refetch();
+    } catch (e) {
+      ErrorToast(e);
+    }
+  };
+
+  const handleTipToggleActive = async (code: number) => {
+    try {
+      await updateTip({ code, toggleActive: true });
+      SuccessToast(STRING.TOGGLE_ACTIVE_SUCCESS);
+      await refetch();
+    } catch (e) {
+      ErrorToast(e);
+    }
+  };
+
+  const handlePageChange = ({ current }: TablePaginationConfig) => {
+    if (current) onPageChange(current);
+  };
+
   return (
     <TableList
       loading={loading}
@@ -48,7 +82,7 @@ export default function TipListTable({
           key: "createdAt",
           width: 120,
           render: (createdAt, { code }) => (
-            <Fragment key={code}>{dateFormat(createdAt)}</Fragment>
+            <Fragment key={code}>{dateToVisibleFormat(createdAt)}</Fragment>
           ),
         },
         {
@@ -66,7 +100,7 @@ export default function TipListTable({
             <Switch
               key={code}
               defaultChecked={value}
-              onClick={() => onTipToggleActive(code)}
+              onClick={() => handleTipToggleActive(code)}
             />
           ),
         },
@@ -75,7 +109,7 @@ export default function TipListTable({
           key: "delete",
           width: 100,
           render: (_, { code }) => (
-            <Button key={code} onClick={() => onTipDelete(code)}>
+            <Button key={code} onClick={() => handleTipDelete(code)}>
               {STRING.DELETE}
             </Button>
           ),
@@ -83,6 +117,7 @@ export default function TipListTable({
       ]}
       rowKey="code"
       dataSource={tips?.edges}
+      onChange={handlePageChange}
     />
   );
 }

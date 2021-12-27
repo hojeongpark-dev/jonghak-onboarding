@@ -11,10 +11,12 @@ export default function TextInput({
   keyAndName,
   initialValue,
   onChange,
+  multiple,
   ...inputFormProps
 }: TextInputProps & TextFormInfo & CustomInputProps): JSX.Element {
   return (
     <Input
+      multiple={multiple}
       key={keyAndName}
       name={keyAndName}
       type={inputFormProps.formType === FormType.PASSWORD ? "password" : "text"}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import useMyInfoQuery from "../apiHooks/myInfo/useMyInfoQuery";
@@ -10,8 +10,10 @@ import Home from "../page/Home";
 import CenterLayout from "../components/layout/styled/CenterLayout";
 import useDidMount from "../hooks/useDidMount";
 import LoadingSpinner from "../components/common/LoadingSpinner";
+import { Component } from "../types/hoc";
+import { ErrorToast } from "../toast";
 
-const withAuth = (Component: () => JSX.Element) => () => {
+const withAuth = (Component: Component) => () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [pending, setPending] = useState(false);
@@ -23,7 +25,7 @@ const withAuth = (Component: () => JSX.Element) => () => {
       const user = await updateUserInfo();
       dispatch(authActions.setUser(user));
     } catch (e) {
-      toast.error(getErrorDescription(e));
+      ErrorToast(e);
       navigate(URLS.LOGIN);
     } finally {
       setPending(false);

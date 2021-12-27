@@ -17,7 +17,7 @@ export default function RadioInput({
       key={keyAndName}
       name={keyAndName}
       onChange={onChange}
-      defaultValue={radioFormProps.initialValue?.key}
+      defaultValue={radioFormProps.initialValue}
       {...removeUnusedProperty(radioFormProps)}
     >
       {radios.map(({ label, key }) => (

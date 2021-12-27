@@ -73,3 +73,27 @@ export const SpotFragment = gql`
     }
   }
 `;
+
+export const SpotEventProduct = gql`
+  fragment SpotEventProduct_product on SpotItem {
+    code
+    discountPrice
+    originalPrice
+    isMain
+    isReservable
+    translations(language: $language) {
+      name
+    }
+    parentCode
+  }
+`;
+
+export const SpotEventProductIndividualEvent = gql`
+  fragment SpotEventProduct_individualEvent on IndividualSpotEvent {
+    code
+    baseValue
+    item {
+      code
+    }
+  }
+`;

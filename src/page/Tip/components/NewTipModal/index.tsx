@@ -3,12 +3,12 @@ import { object, string } from "yup";
 import { useState } from "react";
 import { UploadChangeParam } from "antd/lib/upload/interface";
 import { toast } from "react-toastify";
+import { useImmer } from "use-immer";
 import useForm from "../../../../hooks/useForm";
 import STRING from "../../../../constants/strings";
 import { languageCategoriesKo } from "../../constants";
 import useBlogForSearchQuery from "../../../../apiHooks/blog/useBlogForSearchQuery";
 import recordToArray from "../../../../util/record";
-import { LanguageType } from "../../../../graphql-types";
 import { useCreateTipMutation } from "../../../../apiHooks/tip/useTipMutations";
 import { getErrorDescription } from "../../../../network/error";
 import { usePreSignedUrlForUploadQuery } from "../../../../apiHooks/preSignedUrl/usePreSignedQueries";
@@ -17,39 +17,60 @@ import DescriptionRow from "../../../../components/forms/DescriptionRow";
 import CustomModal from "../../../../components/common/CustomModal";
 import { FormType } from "../../../../types/form/formType";
 import { ModalProps } from "../../../../types/modal";
+import {
+  BlogTranslationsArgs,
+  QueryBlogsArgs,
+} from "../../../../graphql-types";
+import {
+  DEFAULT_LIMIT_SIZE,
+  INITIAL_PAGE_INDEX,
+} from "../../../../constants/list";
+import useWhenUpdate from "../../../../hooks/useWhenUpdate";
+import { ErrorToast, SuccessToast } from "../../../../toast";
 
 const languageRadios = recordToArray(languageCategoriesKo).map(
   ([key, label]) => ({ label, key })
 );
 
+const initialArgs: QueryBlogsArgs & BlogTranslationsArgs = {
+  input: {
+    limit: DEFAULT_LIMIT_SIZE,
+    page: INITIAL_PAGE_INDEX,
+    filter: {
+      title: STRING.EMPTY,
+      language: "KOREAN",
+    },
+  },
+  language: "KOREAN",
+};
+
 function NewTipModal({ isVisible, onClose, afterOk }: ModalProps): JSX.Element {
-  const [language, setLanguage] = useState<LanguageType>("KOREAN");
   const [uploadImage, setUploadImage] = useState<File | null>(null);
 
   const { createTip } = useCreateTipMutation();
   const { getPreSignedUrl } = usePreSignedUrlForUploadQuery();
-  const { blogOptions, setBlogSearchKeyword } = useBlogForSearchQuery(language);
+  const [blogQueryArgs, setBlogQueryArgs] = useImmer(initialArgs);
+  const { blogOptions, refetch } = useBlogForSearchQuery(blogQueryArgs);
 
   const { formik, Form } = useForm({
     formInfo: {
       language: {
         formType: FormType.RADIO,
-        initialValue: languageRadios[0],
+        initialValue: languageRadios[0].key,
       },
       title: {
         formType: FormType.TEXT,
         validator: string().required().min(1),
-        initialValue: "",
+        initialValue: STRING.EMPTY,
       },
       connectedBlog: {
         formType: FormType.SELECT_SEARCH,
-        validator: object().required(),
-        initialValue: { label: "", value: "" },
+        validator: object().pick(["value"]).required(),
       },
       image: {
         formType: FormType.IMAGE_UPLOAD,
         validator: string().required(),
-        initialValue: "",
+        initialValue: STRING.EMPTY,
       },
     },
     onSubmit: async ({ title, connectedBlog, language, image: filename }) => {
@@ -61,27 +82,42 @@ function NewTipModal({ isVisible, onClose, afterOk }: ModalProps): JSX.Element {
         const imageUrl = await s3Upload({ preSignedUrl, file: uploadImage });
         await createTip({
           title,
-          language: language.key,
-          blogTransCode: Number(connectedBlog.value),
+          language,
+          blogTransCode: Number(connectedBlog?.value),
           imageUrl,
         });
-        toast.success(STRING.CREATE_SUCCESS);
+        SuccessToast(STRING.CREATE_SUCCESS);
         afterOk?.();
         onClose();
       } catch (e) {
-        toast.error(getErrorDescription(e));
+        ErrorToast(e);
       }
     },
   });
 
-  const handleLanguageChange = ({ target: { value } }: RadioChangeEvent) => {
-    setLanguage(value as LanguageType);
+  const handleBlogSearchKeywordChange = (keyword: string) => {
+    setBlogQueryArgs((prev) => {
+      prev.input.filter.title = keyword;
+    });
   };
 
-  const handleImageChange = (info: UploadChangeParam) => {
-    if (info.file.originFileObj) {
-      formik.handleChange("image")(info.file.name);
-      setUploadImage(info.file.originFileObj);
+  useWhenUpdate(() => {
+    refetch(blogQueryArgs).catch(ErrorToast);
+  }, [blogQueryArgs]);
+
+  const handleLanguageChange = ({
+    target: { value: language },
+  }: RadioChangeEvent) => {
+    setBlogQueryArgs((prev) => {
+      prev.language = language;
+      prev.input.filter.language = language;
+    });
+  };
+
+  const handleImageChange = ({ file }: UploadChangeParam) => {
+    if (file.originFileObj) {
+      formik.handleChange("image")(file.name);
+      setUploadImage(file.originFileObj);
     }
   };
 
@@ -92,24 +128,24 @@ function NewTipModal({ isVisible, onClose, afterOk }: ModalProps): JSX.Element {
       title={STRING.OPEN_NEW_TIP_MODAL}
       okText={STRING.CREATE}
       okButtonDisable={!formik.isValid}
-      onOk={formik.handleSubmit}
+      onOk={formik.submitForm}
     >
-      <DescriptionRow label={STRING.SELECT_LANGUAGE_LABEL}>
+      <DescriptionRow label={`${STRING.SELECT_LANGUAGE_LABEL}*`}>
         <Form.language
           radios={languageRadios}
           onChange={handleLanguageChange}
         />
       </DescriptionRow>
-      <DescriptionRow label={STRING.TITLE_LABEL}>
+      <DescriptionRow label={`${STRING.TITLE_LABEL}*`}>
         <Form.title />
       </DescriptionRow>
-      <DescriptionRow label={STRING.CONNECTED_BLOG_LABEL}>
+      <DescriptionRow label={`${STRING.CONNECTED_BLOG_LABEL}*`}>
         <Form.connectedBlog
-          onSearch={setBlogSearchKeyword}
+          onSearch={handleBlogSearchKeywordChange}
           options={blogOptions}
         />
       </DescriptionRow>
-      <DescriptionRow label={STRING.MAIN_IMAGE_LABEL}>
+      <DescriptionRow label={`${STRING.MAIN_IMAGE_LABEL}*`}>
         <Form.image onChange={handleImageChange} />
       </DescriptionRow>
     </CustomModal>

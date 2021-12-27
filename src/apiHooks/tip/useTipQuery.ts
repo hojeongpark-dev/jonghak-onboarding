@@ -11,19 +11,17 @@ const TIP = gql`
   }
 `;
 
-export default function useTipQuery(args: QueryTipArgs) {
+export default function useTipQuery(code: number) {
   const { data, loading, error, refetch } = useQuery<Query, QueryTipArgs>(TIP, {
-    variables: args,
+    variables: { code },
   });
 
   const tip = data?.tip;
-
-  const refresh = (code: number) => refetch({ code });
 
   return {
     tip,
     loading,
     error,
-    refresh,
+    refetch,
   };
 }

@@ -41,6 +41,8 @@ module.exports = {
     ],
     "no-undef": "off",
     "no-confusing-arrow": "off",
+    "operator-linebreak": "off",
+    "function-paren-newline": "off",
     "object-curly-newline": "off",
     "implicit-arrow-linebreak": "off",
     "react/jsx-uses-react": "off",
@@ -50,5 +52,6 @@ module.exports = {
     "no-unused-vars": "off",
     "react/display-name": "off",
     "react/react-in-jsx-scope": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
   },
 };

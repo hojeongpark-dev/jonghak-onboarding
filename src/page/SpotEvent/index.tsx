@@ -1,79 +1,89 @@
 import { useImmer } from "use-immer";
+import { toast } from "react-toastify";
 import PageTopLabel from "../../components/common/PageTopLabel";
 import RightButton from "../../components/common/RightButton";
 import Flex from "../../components/layout/styled/Flex";
 import useToggle from "../../hooks/useToggle";
 import EventSpotListTable from "./components/EventSpotListTable";
 import NewEventModal from "./components/NewEventModal";
-import useSpotEventsQuery from "../../apiHooks/spot/useSpotEventsQuery";
+import useSpotEventsQuery from "../../apiHooks/spotEvent/useSpotEventsQuery";
 import EventSpotListFilter from "./components/EventSpotListFilter";
 import SearchBar from "../../components/common/SearchBar";
 import {
+  PeriodArgs,
   QuerySpotEventsArgs,
   SpotEventStatusType,
   SpotEventType,
   SpotTranslationsArgs,
 } from "../../graphql-types";
-import { DEFAULT_LIMIT_SIZE } from "../../constants/list";
+import { DEFAULT_LIMIT_SIZE, INITIAL_PAGE_INDEX } from "../../constants/list";
+import STRING from "../../constants/strings";
+import useWhenUpdate from "../../hooks/useWhenUpdate";
+import { ErrorToast } from "../../toast";
 
 const initialArgs: QuerySpotEventsArgs & SpotTranslationsArgs = {
   input: {
-    page: 1,
+    page: INITIAL_PAGE_INDEX,
     limit: DEFAULT_LIMIT_SIZE,
     filter: {
-      search: "",
+      search: STRING.EMPTY,
     },
   },
   language: "KOREAN",
 };
 
-export default function TripEvent(): JSX.Element {
-  const [modalVisible, toggleModal, modalKey] = useToggle(true);
+export default function SpotEvent(): JSX.Element {
+  const [modalVisible, toggleModalVisible, modalKey] = useToggle();
   const [spotEventsArgs, setSpotEventsArgs] = useImmer(initialArgs);
-  const { events, loading, refetch } = useSpotEventsQuery(spotEventsArgs);
+  const { events, loading, refetch } = useSpotEventsQuery(initialArgs);
 
-  const handleSearchKeywordChange = (keyword: string) => {
+  const handleSearchKeywordChange = (search: string) => {
     setSpotEventsArgs((prev) => {
-      if (prev.input.filter) prev.input.filter.search = keyword;
-      else prev.input.filter = { search: keyword };
+      prev.input.filter &&= { search };
     });
   };
 
   const handleEventStatusChange = (status: SpotEventStatusType) => {
     setSpotEventsArgs((prev) => {
-      if (prev.input.filter) prev.input.filter.status = status;
-      else prev.input.filter = { status };
+      prev.input.filter &&= { status };
     });
   };
 
   const handleEventTypeChange = (type: SpotEventType) => {
     setSpotEventsArgs((prev) => {
-      if (prev.input.filter) prev.input.filter.type = type;
-      else prev.input.filter = { type };
+      prev.input.filter ||= { type };
+      prev.input.filter &&= { type };
     });
   };
 
-  const handleEventPeriodChange = (
-    period: { start: string; end: string } | null
-  ) => {
+  const handleEventPeriodChange = (period: PeriodArgs | null) => {
     setSpotEventsArgs((prev) => {
-      if (prev.input.filter) prev.input.filter.period = period;
-      else prev.input.filter = { period };
+      prev.input.filter ||= { period };
+      prev.input.filter &&= { period };
     });
   };
 
-  const handleDeleteEvent = (code: number) => {
-    console.log("delete", code);
+  const handleChangePage = (page: number) => {
+    setSpotEventsArgs((prev) => {
+      prev.input.page = page;
+    });
   };
+
+  useWhenUpdate(() => {
+    refetch(spotEventsArgs).catch(ErrorToast);
+  }, [spotEventsArgs]);
 
   return (
     <>
-      <PageTopLabel label={"스팟 이벤트"} />
+      <PageTopLabel label={STRING.SPOT_EVENT} />
       <Flex mb={10}>
-        <RightButton label={"새 이벤트 생성"} onClick={toggleModal} />
+        <RightButton
+          label={STRING.OPEN_NEW_EVENT_MODAL}
+          onClick={toggleModalVisible}
+        />
       </Flex>
       <SearchBar
-        placeholder={"상품명, 스팟명 검색"}
+        placeholder={STRING.SPOT_EVENT_SEARCHBAR_PLACEHOLDER}
         resetWhenEmpty
         onSearch={handleSearchKeywordChange}
       />
@@ -83,14 +93,16 @@ export default function TripEvent(): JSX.Element {
         onStatusChange={handleEventStatusChange}
       />
       <EventSpotListTable
-        onEventDelete={handleDeleteEvent}
         loading={loading}
         events={events}
+        refetch={refetch}
+        onPageChange={handleChangePage}
       />
       <NewEventModal
-        isVisible={modalVisible}
         key={modalKey}
-        onClose={toggleModal}
+        isVisible={modalVisible}
+        onClose={toggleModalVisible}
+        afterOk={refetch}
       />
     </>
   );

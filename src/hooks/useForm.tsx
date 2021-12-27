@@ -9,21 +9,25 @@ import ImageUploadInput from "../components/forms/ImageUploadInput";
 import ToggleInput from "../components/forms/ToggleInput";
 import {
   FormComponents,
-  InitialValue,
+  InitialValues,
   UseFormArgs,
   ValidatorType,
 } from "../types/form/useFormType";
 import { FormInfo } from "../types/form/formInfos";
 import { FormType } from "../types/form/formType";
 import {
+  DateRangePickerInputProps,
   ImageUploadInputProps,
   NumberInputProps,
   RadioInputProps,
   SelectSearchInputProps,
+  TextAreaInputProps,
   TextInputProps,
   ToggleInputProps,
 } from "../types/form/inputProps";
 import NumberInput from "../components/forms/NumberInput";
+import DateRangePickerInput from "../components/forms/DateRangePickerInput";
+import TextAreaInput from "../components/forms/TextAreaInput";
 
 export default function useForm<F extends FormInfo>({
   formInfo,
@@ -37,7 +41,7 @@ export default function useForm<F extends FormInfo>({
           [key]: formInfo[key].initialValue ?? "",
         }),
         {}
-      ) as InitialValue<F>,
+      ) as InitialValues<F>,
     []
   );
 
@@ -70,11 +74,23 @@ export default function useForm<F extends FormInfo>({
         let InputElement;
 
         switch (formDetail.formType) {
-          // case FormType.MULTILINE_TEXT:
           case FormType.TEXT:
           case FormType.PASSWORD:
             InputElement = ({ onChange, ...props }: TextInputProps) => (
               <TextInput
+                keyAndName={keyAndName}
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  onChange?.(e);
+                }}
+                {...props}
+                {...formDetail}
+              />
+            );
+            break;
+          case FormType.TEXT_AREA:
+            InputElement = ({ onChange, ...props }: TextAreaInputProps) => (
+              <TextAreaInput
                 keyAndName={keyAndName}
                 onChange={(e) => {
                   formik.handleChange(e);
@@ -131,6 +147,7 @@ export default function useForm<F extends FormInfo>({
             InputElement = ({ onChange, ...props }: ToggleInputProps) => (
               <ToggleInput
                 keyAndName={keyAndName}
+                initialValue={!!formDetail.initialValue}
                 onChange={(toggle) => {
                   formik.setFieldValue(`${name}`, toggle);
                   onChange?.(toggle);
@@ -144,6 +161,22 @@ export default function useForm<F extends FormInfo>({
             InputElement = (props: ImageUploadInputProps) => (
               <ImageUploadInput
                 keyAndName={keyAndName}
+                {...props}
+                {...formDetail}
+              />
+            );
+            break;
+          case FormType.DATE_RANGE_PICKER:
+            InputElement = ({
+              onChange,
+              ...props
+            }: DateRangePickerInputProps) => (
+              <DateRangePickerInput
+                keyAndName={keyAndName}
+                onChange={(range) => {
+                  formik.setFieldValue(`${name}`, range);
+                  onChange?.(range);
+                }}
                 {...props}
                 {...formDetail}
               />

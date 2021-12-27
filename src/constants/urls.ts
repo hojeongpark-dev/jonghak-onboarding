@@ -1,13 +1,8 @@
-export enum URL_LABELS {
-  TIP = "Tip",
-  EVENT = "Event",
-  HOME = "Creatrip",
-}
-
+// eslint-disable-next-line import/prefer-default-export
 export enum URLS {
   LOGIN = "/login",
-  TRIP_EVENT = "/tripevent",
-  TRIP_EVENT_DETAIL = "/tripevent/:code",
+  SPOT_EVENT = "/spotevent",
+  SPOT_EVENT_DETAIL = "/spotevent/:code",
   TIP = "/tip",
   TIP_DETAIL = "/tip/:code",
   HOME = "/",

@@ -6,6 +6,7 @@ import {
   SelectSearchInputProps,
 } from "../../../types/form/inputProps";
 import { SelectSearchFormInfo } from "../../../types/form/formInfos";
+import STRING from "../../../constants/strings";
 
 export default function SelectSearchInput({
   keyAndName,
@@ -25,7 +26,7 @@ export default function SelectSearchInput({
       filterOption={false}
       options={options}
       onSearch={onSearch}
-      onBlur={() => onSearch("")}
+      onBlur={() => onSearch(STRING.EMPTY)}
       onSelect={(_, option) => {
         if (option) {
           onOptionClick?.({ value: option.value, label: `${option.label}` });

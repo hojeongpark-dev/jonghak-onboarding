@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { bool, object, string } from "yup";
 import { UploadChangeParam } from "antd/es/upload";
-import { toast } from "react-toastify";
 import DescriptionRow from "../../../../components/forms/DescriptionRow";
 import STRING from "../../../../constants/strings";
 import useForm from "../../../../hooks/useForm";
@@ -11,9 +10,9 @@ import Flex from "../../../../components/layout/styled/Flex";
 import { SelectOptionItem } from "../../../../types/form/inputProps";
 import { FormType } from "../../../../types/form/formType";
 import s3Upload from "../../../../network/s3Upload";
-import { getErrorDescription } from "../../../../network/error";
 import { useTipUpdateMutation } from "../../../../apiHooks/tip/useTipMutations";
 import { usePreSignedUrlForUploadQuery } from "../../../../apiHooks/preSignedUrl/usePreSignedQueries";
+import { ErrorToast, SuccessToast } from "../../../../toast";
 
 function getAfterValueWhenDiff<T>(before: T, after: T): T | undefined {
   return before === after ? undefined : after;
@@ -21,22 +20,23 @@ function getAfterValueWhenDiff<T>(before: T, after: T): T | undefined {
 
 const FormLayout = styled.section`
   max-width: 800px;
+  width: 720px;
 `;
 
 interface TipDetailFormsProps {
   tip: Tip;
   blogOptions?: SelectOptionItem[];
-  onSearch: (keyword: string) => void;
+  onBlogSearch: (keyword: string) => void;
   onUpdate: () => void;
 }
 
 export default function TipDetailForms({
   tip,
   blogOptions,
-  onSearch,
+  onBlogSearch,
   onUpdate,
 }: TipDetailFormsProps): JSX.Element {
-  const { updateTip } = useTipUpdateMutation();
+  const { updateTip, loading } = useTipUpdateMutation();
   const { getPreSignedUrl } = usePreSignedUrlForUploadQuery();
 
   const connectedBlog = {
@@ -58,7 +58,7 @@ export default function TipDetailForms({
       },
       connectedBlog: {
         formType: FormType.SELECT_SEARCH,
-        validator: object().required(),
+        validator: object().pick(["value"]).required(),
         initialValue: connectedBlog,
       },
       image: {
@@ -79,10 +79,10 @@ export default function TipDetailForms({
           toggleActive: getAfterValueWhenDiff(tip.isActive, isActive),
           imageUrl: getAfterValueWhenDiff(tip.imageUrl, image),
         });
-        toast.success(STRING.UPDATE_SUCCESS);
+        SuccessToast(STRING.UPDATE_SUCCESS);
         onUpdate();
       } catch (e) {
-        toast.error(getErrorDescription(e));
+        ErrorToast(e);
       }
     },
   });
@@ -98,29 +98,35 @@ export default function TipDetailForms({
         });
         const imageUrl = await s3Upload({ preSignedUrl, file: uploadImage });
         await formik.setFieldValue("image", imageUrl);
-        toast.success(STRING.IMAGE_UPLOAD_SUCCESS);
+        SuccessToast(STRING.IMAGE_UPLOAD_SUCCESS);
       } catch (e) {
-        toast.error(getErrorDescription(e));
+        ErrorToast(e);
       }
     }
   };
 
   return (
     <Flex flexDirection={"row-reverse"} mt={20}>
-      <RightButton label={STRING.SAVE} onClick={formik.handleSubmit} />
+      <RightButton
+        disabled={!formik.isValid || loading}
+        label={STRING.SAVE}
+        onClick={formik.submitForm}
+      />
       <FormLayout>
         <DescriptionRow label={STRING.TITLE}>
           <Form.title value={formik.values.title} />
         </DescriptionRow>
-        <DescriptionRow label={"공개여부"}>
+        <DescriptionRow label={STRING.IS_ACTIVE}>
           <Form.isActive />
         </DescriptionRow>
-        <DescriptionRow label={"담당자"}>
+        <DescriptionRow label={STRING.MANAGER}>
           {tip.manager?.nickname}
         </DescriptionRow>
-        <DescriptionRow label={"생성일자"}>{tip.createdAt}</DescriptionRow>
+        <DescriptionRow label={STRING.CREATED_AT}>
+          {tip.createdAt}
+        </DescriptionRow>
         <DescriptionRow label={STRING.CONNECTED_BLOG_LABEL}>
-          <Form.connectedBlog onSearch={onSearch} options={blogOptions} />
+          <Form.connectedBlog onSearch={onBlogSearch} options={blogOptions} />
         </DescriptionRow>
         <DescriptionRow label={STRING.MAIN_IMAGE_LABEL}>
           <Form.image srcUrl={tip.imageUrl} onChange={handleImageChange} />

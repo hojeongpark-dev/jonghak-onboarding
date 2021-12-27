@@ -1,17 +1,13 @@
 import { gql, useQuery } from "@apollo/client";
-import { SpotEventFragment, SpotFragment } from "../../graphql/fragments";
+import { SpotEventFragment } from "../../graphql/fragments";
 import {
-  LanguageType,
   Query,
   QuerySpotEventsArgs,
-  QuerySpotsArgs,
-  SpotPageArgs,
   SpotTranslationsArgs,
 } from "../../graphql-types";
-import { DEFAULT_LIMIT_SIZE } from "../../constants/list";
 
 const SpotEvents = gql`
-  query Spots($input: SpotEventPageArgs!, $language: LanguageType!) {
+  query SpotEvents($input: SpotEventPageArgs!, $language: LanguageType!) {
     spotEvents(input: $input) {
       totalCount
       edges {

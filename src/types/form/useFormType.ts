@@ -1,15 +1,20 @@
 import { AnySchema } from "yup/lib/schema";
 import Reference from "yup/lib/Reference";
 import {
+  DateRangePickerInputProps,
   ImageUploadInputProps,
   NumberInputProps,
   RadioInputProps,
+  RadioItem,
+  RangeMoment,
+  SelectOptionItem,
   SelectSearchInputProps,
   TextInputProps,
   ToggleInputProps,
 } from "./inputProps";
 import { FormInfo } from "./formInfos";
 import { FormType } from "./formType";
+import { Nullable } from "../null";
 
 type TextComponent = (props: TextInputProps) => JSX.Element;
 type RadioComponent = (props: RadioInputProps) => JSX.Element;
@@ -17,18 +22,33 @@ type ImageUploadComponent = (props: ImageUploadInputProps) => JSX.Element;
 type ToggleComponent = (props: ToggleInputProps) => JSX.Element;
 type NumberComponent = (props: NumberInputProps) => JSX.Element;
 type SelectSearchComponent = (props: SelectSearchInputProps) => JSX.Element;
+type DateRangePickerComponent = (
+  props: DateRangePickerInputProps
+) => JSX.Element;
 
-export type FormComponents<Form extends FormInfo> = {
-  [Name in keyof Form]: Form[Name]["formType"] extends FormType.RADIO
+type GetFormType<
+  Form extends FormInfo,
+  Key extends keyof Form
+> = Form[Key]["formType"];
+
+type GetInitialValue<
+  Form extends FormInfo,
+  Key extends keyof Form
+> = Form[Key]["initialValue"];
+
+export type FormComponents<F extends FormInfo> = {
+  [K in keyof F]: GetFormType<F, K> extends FormType.RADIO
     ? RadioComponent
-    : Form[Name]["formType"] extends FormType.SELECT_SEARCH
+    : GetFormType<F, K> extends FormType.SELECT_SEARCH
     ? SelectSearchComponent
-    : Form[Name]["formType"] extends FormType.IMAGE_UPLOAD
+    : GetFormType<F, K> extends FormType.IMAGE_UPLOAD
     ? ImageUploadComponent
-    : Form[Name]["formType"] extends FormType.TOGGLE
+    : GetFormType<F, K> extends FormType.TOGGLE
     ? ToggleComponent
-    : Form[Name]["formType"] extends FormType.NUMBER
+    : GetFormType<F, K> extends FormType.NUMBER
     ? NumberComponent
+    : GetFormType<F, K> extends FormType.DATE_RANGE_PICKER
+    ? DateRangePickerComponent
     : TextComponent;
 };
 
@@ -36,11 +56,24 @@ export type ValidatorType = {
   [key: string]: AnySchema | Reference;
 };
 
-export type InitialValue<Form extends FormInfo> = {
-  [Name in keyof Form]: Form[Name]["initialValue"];
+export type InitialValues<F extends FormInfo> = {
+  [K in keyof F]: GetInitialValue<F, K> &
+    (GetFormType<F, K> extends FormType.RADIO
+      ? RadioItem
+      : GetFormType<F, K> extends FormType.SELECT_SEARCH
+      ? SelectOptionItem
+      : GetFormType<F, K> extends FormType.IMAGE_UPLOAD
+      ? string
+      : GetFormType<F, K> extends FormType.TOGGLE
+      ? boolean
+      : GetFormType<F, K> extends FormType.NUMBER
+      ? number
+      : GetFormType<F, K> extends FormType.DATE_RANGE_PICKER
+      ? Nullable<RangeMoment>
+      : string);
 };
 
 export interface UseFormArgs<F extends FormInfo> {
   formInfo: F;
-  onSubmit?: (value: InitialValue<F>) => void;
+  onSubmit?: (value: InitialValues<F>) => void;
 }

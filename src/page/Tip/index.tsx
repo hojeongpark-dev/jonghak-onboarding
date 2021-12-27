@@ -1,5 +1,4 @@
 import { useImmer } from "use-immer";
-import { toast } from "react-toastify";
 import Flex from "../../components/layout/styled/Flex";
 import useTipsQuery from "../../apiHooks/tip/useTipsQuery";
 import { LanguageType, QueryTipsArgs } from "../../graphql-types";
@@ -9,14 +8,11 @@ import RightButton from "../../components/common/RightButton";
 import STRING from "../../constants/strings";
 import SearchBar from "../../components/common/SearchBar";
 import TipListTable from "./components/TipListTable";
-import {
-  useDeleteTipMutation,
-  useTipUpdateMutation,
-} from "../../apiHooks/tip/useTipMutations";
-import { getErrorDescription } from "../../network/error";
-import { DEFAULT_LIMIT_SIZE } from "../../constants/list";
+import { DEFAULT_LIMIT_SIZE, INITIAL_PAGE_INDEX } from "../../constants/list";
 import useToggle from "../../hooks/useToggle";
 import NewTipModal from "./components/NewTipModal";
+import useWhenUpdate from "../../hooks/useWhenUpdate";
+import { ErrorToast } from "../../toast";
 
 const initialArgs: QueryTipsArgs = {
   input: {
@@ -24,49 +20,38 @@ const initialArgs: QueryTipsArgs = {
       language: "KOREAN",
     },
     limit: DEFAULT_LIMIT_SIZE,
-    page: 1,
+    page: INITIAL_PAGE_INDEX,
   },
 };
 
 function Tip(): JSX.Element {
   const [queryTipsArgs, setQueryTipsArgs] = useImmer(initialArgs);
-  const { tips, loading, refetch } = useTipsQuery(queryTipsArgs);
-  const { updateTip } = useTipUpdateMutation();
-  const { requestDelete } = useDeleteTipMutation();
+  const { tips, loading, refetch } = useTipsQuery(initialArgs);
   const [modalVisible, toggleModalVisible, modalKey] = useToggle();
 
-  const refreshTips = () => refetch(queryTipsArgs);
-
-  const handleChangeLangFilter = (key: LanguageType) => {
+  const handleChangeLangFilter = (language: LanguageType) => {
     setQueryTipsArgs((prev) => {
-      prev.input.filter.language = key;
+      prev.input.page = INITIAL_PAGE_INDEX;
+      prev.input.filter.language = language;
     });
   };
 
-  const handleChangeFilterTitle = (value: string) => {
+  const handleChangeFilterTitle = (search: string) => {
     setQueryTipsArgs((prev) => {
-      prev.input.filter.search = value;
+      prev.input.page = INITIAL_PAGE_INDEX;
+      prev.input.filter.search = search;
     });
   };
 
-  const handleTipDelete = async (code: number) => {
-    try {
-      await requestDelete(code);
-      await refreshTips();
-      toast.success(STRING.DELETE_SUCCESS);
-    } catch (e) {
-      toast.error(getErrorDescription(e));
-    }
+  const handleChangePage = (page: number) => {
+    setQueryTipsArgs((prev) => {
+      prev.input.page = page;
+    });
   };
 
-  const handleTipToggleActive = async (code: number) => {
-    try {
-      await updateTip({ code, toggleActive: true });
-      toast.success(STRING.TOGGLE_ACTIVE_SUCCESS);
-    } catch (e) {
-      toast.error(getErrorDescription(e));
-    }
-  };
+  useWhenUpdate(() => {
+    refetch(queryTipsArgs).catch(ErrorToast);
+  }, [queryTipsArgs]);
 
   return (
     <>
@@ -89,15 +74,15 @@ function Tip(): JSX.Element {
         />
       </Flex>
       <TipListTable
-        loading={loading}
-        onTipDelete={handleTipDelete}
-        onTipToggleActive={handleTipToggleActive}
         tips={tips}
+        loading={loading}
+        refetch={refetch}
+        onPageChange={handleChangePage}
       />
       <NewTipModal
         key={modalKey}
         onClose={toggleModalVisible}
-        afterOk={refreshTips}
+        afterOk={refetch}
         isVisible={modalVisible}
       />
     </>

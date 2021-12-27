@@ -14,6 +14,7 @@ import { useAppDispatch } from "../../redux/store";
 import { authActions } from "../../redux/slice/auth";
 import { URLS } from "../../constants/urls";
 import { FormType } from "../../types/form/formType";
+import { ErrorToast } from "../../toast";
 
 export default function Login(): JSX.Element {
   const { updateUserInfo } = useMyInfoQuery();
@@ -52,7 +53,7 @@ export default function Login(): JSX.Element {
         if (res?.signIn.accessToken) await setUserInfo();
         navigate(URLS.HOME);
       } catch (e) {
-        toast.error(getErrorDescription(e));
+        ErrorToast(e);
       }
     },
   });

@@ -83,20 +83,25 @@ interface CustomUpdateTipArgs {
 }
 
 function useTipUpdateMutation() {
-  const [updateTipTitle] = useMutation<Mutation, MutationUpdateTipArgs>(
-    UPDATE_TIP_TITLE
-  );
-  const [updateTipImage] = useMutation<Mutation, MutationSetTipImageArgs>(
-    UPDATE_TIP_IMAGE
-  );
-  const [updateTipBlog] = useMutation<Mutation, MutationSetBlogTransToTipArgs>(
-    UPDATE_TIP_BlOG
-  );
+  const [updateTipTitle, { loading: titleLoading }] = useMutation<
+    Mutation,
+    MutationUpdateTipArgs
+  >(UPDATE_TIP_TITLE);
+  const [updateTipImage, { loading: imageLoading }] = useMutation<
+    Mutation,
+    MutationSetTipImageArgs
+  >(UPDATE_TIP_IMAGE);
+  const [updateTipBlog, { loading: blogLoading }] = useMutation<
+    Mutation,
+    MutationSetBlogTransToTipArgs
+  >(UPDATE_TIP_BlOG);
 
-  const [updateTipActive] = useMutation<
+  const [updateTipActive, { loading: activeLoading }] = useMutation<
     Mutation,
     MutationToggleTipActiveStatusArgs
   >(UPDATE_TIP_ACTIVE);
+
+  const loading = titleLoading || imageLoading || blogLoading || activeLoading;
 
   const updateTip = ({
     title,
@@ -104,39 +109,29 @@ function useTipUpdateMutation() {
     blogTransCode,
     toggleActive,
     imageUrl,
-  }: CustomUpdateTipArgs) => {
-    const promiseArr = [];
-    if (title !== undefined) {
-      promiseArr.push(
-        updateTipTitle({ variables: { input: { tipCode: code, title } } })
-      );
-    }
-    if (blogTransCode !== undefined) {
-      promiseArr.push(
-        updateTipBlog({
-          variables: { input: { tipCode: code, blogTransCode } },
-        })
-      );
-    }
-    if (toggleActive !== undefined) {
-      promiseArr.push(updateTipActive({ variables: { code } }));
-    }
-    if (imageUrl !== undefined) {
-      promiseArr.push(
-        updateTipImage({
-          variables: {
-            input: {
-              tipCode: code,
-              imageUrl,
+  }: CustomUpdateTipArgs) =>
+    Promise.all([
+      ...[
+        title === undefined ||
+          updateTipTitle({ variables: { input: { tipCode: code, title } } }),
+        blogTransCode === undefined ||
+          updateTipBlog({
+            variables: { input: { tipCode: code, blogTransCode } },
+          }),
+        toggleActive === undefined || updateTipActive({ variables: { code } }),
+        imageUrl === undefined ||
+          updateTipImage({
+            variables: {
+              input: {
+                tipCode: code,
+                imageUrl,
+              },
             },
-          },
-        })
-      );
-    }
-    return Promise.all(promiseArr);
-  };
+          }),
+      ],
+    ]);
 
-  return { updateTip };
+  return { updateTip, loading };
 }
 
 const CREATE_TIP = gql`

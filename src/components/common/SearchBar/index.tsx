@@ -1,5 +1,5 @@
 import { Input } from "antd";
-import React, { ChangeEvent } from "react";
+import { ChangeEvent } from "react";
 import { SearchProps } from "antd/lib/input/Search";
 
 interface SearchBarProps extends SearchProps {

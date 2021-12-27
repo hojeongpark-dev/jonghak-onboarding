@@ -1,12 +1,9 @@
 import { gql, useQuery } from "@apollo/client";
-import { useState } from "react";
 import {
   BlogTranslationsArgs,
-  LanguageType,
   Query,
   QueryBlogsArgs,
 } from "../../graphql-types";
-import { DEFAULT_LIMIT_SIZE } from "../../constants/list";
 import { SelectOptionItem } from "../../types/form/inputProps";
 
 const BLOG_FOR_SEARCH = gql`
@@ -24,24 +21,13 @@ const BLOG_FOR_SEARCH = gql`
 `;
 
 export default function useBlogForSearchQuery(
-  language: LanguageType = "KOREAN"
+  initialArgs: QueryBlogsArgs & BlogTranslationsArgs
 ) {
-  const [blogSearchKeyword, setBlogSearchKeyword] = useState("");
-  const { data, error, loading } = useQuery<
+  const { data, error, loading, refetch } = useQuery<
     Query,
     QueryBlogsArgs & BlogTranslationsArgs
   >(BLOG_FOR_SEARCH, {
-    variables: {
-      input: {
-        limit: DEFAULT_LIMIT_SIZE,
-        page: 1,
-        filter: {
-          title: blogSearchKeyword,
-          language,
-        },
-      },
-      language,
-    },
+    variables: initialArgs,
   });
 
   const blogs = data?.blogs.edges;
@@ -53,7 +39,7 @@ export default function useBlogForSearchQuery(
     })
   );
   return {
-    setBlogSearchKeyword,
+    refetch,
     blogOptions,
     blogs,
     loading,

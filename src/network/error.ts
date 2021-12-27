@@ -15,22 +15,26 @@ interface ExtensionsWithDesc extends GraphQLErrorExtensions, ResponseWithDesc {
   exception?: ResponseWithDesc;
 }
 
-export const getGraphQlErrorDescription = (error: GraphQLError):string|undefined => {
+export const getGraphQlErrorDescription = (
+  error: GraphQLError
+): string | undefined => {
+  const msg = error.message;
   const extensions = error.extensions as ExtensionsWithDesc;
   return (
-    extensions?.response?.description
-    || extensions.exception?.response?.description
+    extensions?.response?.description ||
+    extensions.exception?.response?.description ||
+    msg
   );
 };
 
-export const getNetworkErrorDescription = (error: NetworkError) => `${error}`;
+export const getNetworkErrorDescription = (error: NetworkError) =>
+  `${error?.message.toString() || error?.name.toString() || error?.toString()}`;
 
 export const getErrorDescription = (error: unknown) => {
-  const {
-    graphQLErrors,
-    networkError,
-  } = error as ApolloError;
-  if (graphQLErrors) return graphQLErrors.map(getGraphQlErrorDescription).join("\n");
+  const { graphQLErrors, networkError } = error as ApolloError;
+  if (graphQLErrors.length > 0) {
+    return graphQLErrors.map(getGraphQlErrorDescription).join("\n");
+  }
   if (networkError) return getNetworkErrorDescription(networkError);
   return (error as Error).toString();
 };

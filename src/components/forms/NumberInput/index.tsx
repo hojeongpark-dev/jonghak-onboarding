@@ -11,6 +11,7 @@ export default function NumberInput({
   initialValue,
   onChange,
   placeholder,
+  allowClear = true,
   ...numberFormProps
 }: NumberInputProps & NumberFormInfo & CustomInputProps): JSX.Element {
   return (
@@ -19,7 +20,7 @@ export default function NumberInput({
       name={keyAndName}
       placeholder={placeholder}
       type={"number"}
-      allowClear
+      allowClear={allowClear}
       defaultValue={initialValue}
       onChange={onChange}
       {...removeUnusedProperty(numberFormProps)}
