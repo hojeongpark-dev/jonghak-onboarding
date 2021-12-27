@@ -52,6 +52,7 @@ module.exports = {
     "no-unused-vars": "off",
     "react/display-name": "off",
     "react/react-in-jsx-scope": "off",
+    "import/no-extraneous-dependencies": "off",
     "@typescript-eslint/ban-ts-comment": "off",
   },
 };

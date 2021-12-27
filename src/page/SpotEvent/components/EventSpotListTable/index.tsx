@@ -1,6 +1,6 @@
 import { Button, Popconfirm, TablePaginationConfig } from "antd";
 import { Link } from "react-router-dom";
-import { Fragment } from "react";
+import { Fragment, useCallback } from "react";
 import {
   SpotEventPage,
   SpotEventStatusType,
@@ -54,10 +54,6 @@ export default function EventSpotListTable({
     } catch (e) {
       ErrorToast(e);
     }
-  };
-
-  const handlePageChange = ({ current }: TablePaginationConfig) => {
-    if (current) onPageChange(current);
   };
 
   return (
@@ -140,7 +136,7 @@ export default function EventSpotListTable({
       ]}
       rowKey="code"
       dataSource={events?.edges}
-      onChange={handlePageChange}
+      onPageChange={onPageChange}
     />
   );
 }

@@ -5,24 +5,25 @@ const MY_INFO = gql`
   query myInfo {
     myInfo {
       id
+      name
     }
   }
 `;
 
 export default function useMyInfoQuery() {
   const {
-    data: user, error, refetch, loading
-  } = useQuery<Member>(MY_INFO);
-
-  const updateUserInfo = async () => {
-    const res = await refetch();
-    return res.data;
-  };
+    data: user,
+    error,
+    refetch,
+    loading,
+  } = useQuery<Member>(MY_INFO, {
+    notifyOnNetworkStatusChange: true,
+  });
 
   return {
     user,
     loading,
     error,
-    updateUserInfo,
+    refetch,
   };
 }

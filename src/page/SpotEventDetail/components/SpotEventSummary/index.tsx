@@ -29,7 +29,7 @@ const numberInputStyle = { width: 140, marginRight: 20 };
 
 interface SpotEventSummaryProps {
   type: SpotEventType;
-  summaryInfo: Omit<Omit<SpotEvent, "individuals">, "type">;
+  summaryInfo: Omit<SpotEvent, "individuals" | "type">;
   refetch: () => void;
 }
 

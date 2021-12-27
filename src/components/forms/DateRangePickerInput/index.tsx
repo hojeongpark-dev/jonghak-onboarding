@@ -1,4 +1,7 @@
 import { DatePicker } from "antd";
+// @ts-ignore
+import { DisabledTimes, EventValue } from "rc-picker/lib/interface";
+import moment from "moment-es6";
 import {
   CustomInputProps,
   DateRangePickerInputProps,
@@ -9,12 +12,15 @@ import { removeUnusedProperty } from "../../../util/form";
 import { DATE_TIME_PICKER_PLACEHOLDER } from "../../../constants/etc";
 import { isBeforeDate } from "../../../util/date";
 
-function disabledDateTime() {
-  const current = new Date();
-  return {
-    disabledHours: () => [...Array(current.getHours()).keys()],
-    disabledMinutes: () => [...Array(current.getMinutes()).keys()],
-  };
+function disabledDateTime(date: EventValue<moment.Moment>): DisabledTimes {
+  if (date && date.isSameOrBefore()) {
+    const current = new Date();
+    return {
+      disabledHours: () => [...Array(current.getHours()).keys()],
+      disabledMinutes: () => [...Array(current.getMinutes()).keys()],
+    };
+  }
+  return {};
 }
 
 export default function DateRangePickerInput({

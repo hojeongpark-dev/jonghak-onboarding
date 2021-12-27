@@ -1,15 +1,15 @@
 import { gql, useMutation } from "@apollo/client";
 import { SpotEventProductIndividualEvent } from "../../graphql/fragments";
 import {
-  CreateDiscountIndividualSpotEventArgs,
-  CreateGetFreeIndividualSpotEventArgs,
-  DeleteIndividualSpotEventArgs,
   Mutation,
   MutationCreateDiscountIndividualSpotEventArgs,
   MutationCreateGetFreeIndividualSpotEventArgs,
   MutationDeleteIndividualSpotEventArgs,
   MutationUpdateDiscountIndividualSpotEventArgs,
   UpdateDiscountIndividualSpotEventArgs,
+  CreateDiscountIndividualSpotEventArgs,
+  CreateGetFreeIndividualSpotEventArgs,
+  DeleteIndividualSpotEventArgs,
 } from "../../graphql-types";
 
 const CREATE_DISCOUNT_INDIVIDUAL_SPOT_EVENT = gql`

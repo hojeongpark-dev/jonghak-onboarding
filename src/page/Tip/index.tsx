@@ -29,21 +29,21 @@ function Tip(): JSX.Element {
   const { tips, loading, refetch } = useTipsQuery(initialArgs);
   const [modalVisible, toggleModalVisible, modalKey] = useToggle();
 
-  const handleChangeLangFilter = (language: LanguageType) => {
+  const handleLangFilterChange = (language: LanguageType) => {
     setQueryTipsArgs((prev) => {
       prev.input.page = INITIAL_PAGE_INDEX;
       prev.input.filter.language = language;
     });
   };
 
-  const handleChangeFilterTitle = (search: string) => {
+  const handleFilterTitleChange = (search: string) => {
     setQueryTipsArgs((prev) => {
       prev.input.page = INITIAL_PAGE_INDEX;
       prev.input.filter.search = search;
     });
   };
 
-  const handleChangePage = (page: number) => {
+  const handlePageChange = (page: number) => {
     setQueryTipsArgs((prev) => {
       prev.input.page = page;
     });
@@ -58,7 +58,7 @@ function Tip(): JSX.Element {
       <CategoryFilter
         defaultSelectedKeys={["KOREAN"]}
         categories={languageCategoriesKo}
-        onClickCategory={handleChangeLangFilter}
+        onClickCategory={handleLangFilterChange}
       />
       <Flex marginY={10}>
         <RightButton
@@ -70,14 +70,14 @@ function Tip(): JSX.Element {
         <SearchBar
           placeholder={STRING.TIP_TITLE}
           resetWhenEmpty
-          onSearch={handleChangeFilterTitle}
+          onSearch={handleFilterTitleChange}
         />
       </Flex>
       <TipListTable
         tips={tips}
         loading={loading}
         refetch={refetch}
-        onPageChange={handleChangePage}
+        onPageChange={handlePageChange}
       />
       <NewTipModal
         key={modalKey}

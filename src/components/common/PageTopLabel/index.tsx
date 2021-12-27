@@ -7,12 +7,5 @@ interface PageTopLabelProps {
 export default function PageTopLabel({
   label,
 }: PageTopLabelProps): JSX.Element {
-  return (
-    <PageHeader
-      // className="site-page-header"
-      title={label}
-      // breadcrumb={{ routes }}
-      // subTitle="This is a subtitle"
-    />
-  );
+  return <PageHeader title={label} />;
 }

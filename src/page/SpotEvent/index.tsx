@@ -1,5 +1,4 @@
 import { useImmer } from "use-immer";
-import { toast } from "react-toastify";
 import PageTopLabel from "../../components/common/PageTopLabel";
 import RightButton from "../../components/common/RightButton";
 import Flex from "../../components/layout/styled/Flex";
@@ -63,7 +62,7 @@ export default function SpotEvent(): JSX.Element {
     });
   };
 
-  const handleChangePage = (page: number) => {
+  const handlePageChange = (page: number) => {
     setSpotEventsArgs((prev) => {
       prev.input.page = page;
     });
@@ -96,7 +95,7 @@ export default function SpotEvent(): JSX.Element {
         loading={loading}
         events={events}
         refetch={refetch}
-        onPageChange={handleChangePage}
+        onPageChange={handlePageChange}
       />
       <NewEventModal
         key={modalKey}

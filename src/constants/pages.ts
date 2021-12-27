@@ -10,18 +10,18 @@ import hocProvider from "../hoc/hocProvider";
 import { Hoc } from "../types/hoc";
 
 export enum PAGE_LABELS {
+  HOME = "Creatrip",
   TIP = "Tip",
   TIP_DETAIL = "Tip Detail",
   EVENT = "Event",
   EVENT_DETAIL = "Event Detail",
-  HOME = "Creatrip",
 }
 
 export type PageInfo = {
   label?: PAGE_LABELS;
   path: URLS;
-  hideMenu?: boolean;
   Element: () => JSX.Element;
+  hideMenu?: boolean;
 };
 
 const addHoc = (hocs: Hoc[], pages: PageInfo[]) =>
@@ -41,8 +41,8 @@ export const PRIVATE_PAGES: PageInfo[] = addHoc(
     {
       label: PAGE_LABELS.EVENT_DETAIL,
       path: URLS.SPOT_EVENT_DETAIL,
-      hideMenu: true,
       Element: SpotEventDetail,
+      hideMenu: true,
     },
     {
       label: PAGE_LABELS.TIP,
@@ -52,8 +52,8 @@ export const PRIVATE_PAGES: PageInfo[] = addHoc(
     {
       label: PAGE_LABELS.TIP_DETAIL,
       path: URLS.TIP_DETAIL,
-      hideMenu: true,
       Element: TipDetail,
+      hideMenu: true,
     },
   ]
 );

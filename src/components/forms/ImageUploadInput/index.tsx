@@ -30,12 +30,12 @@ export default function ImageUploadInput({
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  const customRequest = () => {};
+  // eslint-disable-next-line @typescript-eslint/no-empty-function,no-underscore-dangle
+  const _unUsedRequest = () => {};
 
   return (
     <Upload.Dragger
-      customRequest={customRequest}
+      customRequest={_unUsedRequest}
       showUploadList={false}
       onChange={(e) => {
         makePreviewImage(e.file?.originFileObj);
@@ -51,9 +51,7 @@ export default function ImageUploadInput({
         {previewImageUrl && (
           <ImageFilePreview src={previewImageUrl} alt={"previewImageUrl"} />
         )}
-        <p className="ant-upload-text">
-          Click or drag file to this area to upload
-        </p>
+        <p>Click or drag file to this area to upload</p>
       </Flex>
     </Upload.Dragger>
   );

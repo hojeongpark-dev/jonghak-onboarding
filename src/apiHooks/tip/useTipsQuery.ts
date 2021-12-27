@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, NetworkStatus, useQuery } from "@apollo/client";
 import { Query, QueryTipsArgs } from "../../graphql-types";
 import { TipsFragment } from "../../graphql/fragments";
 
@@ -12,14 +12,20 @@ const TIPS = gql`
 `;
 
 export default function useTipsQuery(args: QueryTipsArgs) {
-  const { data, loading, error, refetch } = useQuery<Query, QueryTipsArgs>(
-    TIPS,
-    {
-      variables: args,
-    }
-  );
+  const {
+    data,
+    loading: queryLoading,
+    error,
+    refetch,
+    networkStatus,
+  } = useQuery<Query, QueryTipsArgs>(TIPS, {
+    variables: args,
+    notifyOnNetworkStatusChange: true,
+  });
 
   const tips = data?.tips;
+
+  const loading = queryLoading && networkStatus !== NetworkStatus.refetch;
 
   return {
     tips,

@@ -6,7 +6,7 @@ import {
 } from "../../graphql-types";
 
 const STOPS = gql`
-  query Spots($input: SpotPageArgs!, $language: LanguageType) {
+  query spots($input: SpotPageArgs!, $language: LanguageType) {
     spots(input: $input) {
       edges {
         code

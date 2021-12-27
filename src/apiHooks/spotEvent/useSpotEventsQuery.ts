@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, NetworkStatus, useQuery } from "@apollo/client";
 import { SpotEventFragment } from "../../graphql/fragments";
 import {
   Query,
@@ -7,7 +7,7 @@ import {
 } from "../../graphql-types";
 
 const SpotEvents = gql`
-  query SpotEvents($input: SpotEventPageArgs!, $language: LanguageType!) {
+  query spotEvents($input: SpotEventPageArgs!, $language: LanguageType!) {
     spotEvents(input: $input) {
       totalCount
       edges {
@@ -21,14 +21,20 @@ const SpotEvents = gql`
 export default function useSpotEventsQuery(
   variables: QuerySpotEventsArgs & SpotTranslationsArgs
 ) {
-  const { data, loading, error, refetch } = useQuery<
-    Query,
-    QuerySpotEventsArgs & SpotTranslationsArgs
-  >(SpotEvents, {
+  const {
+    data,
+    loading: queryLoading,
+    error,
+    refetch,
+    networkStatus,
+  } = useQuery<Query, QuerySpotEventsArgs & SpotTranslationsArgs>(SpotEvents, {
     variables,
+    notifyOnNetworkStatusChange: true,
   });
 
   const events = data?.spotEvents;
+
+  const loading = queryLoading && networkStatus !== NetworkStatus.refetch;
 
   return { events, loading, error, refetch };
 }

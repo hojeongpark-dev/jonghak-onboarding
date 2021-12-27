@@ -1,13 +1,11 @@
 import { Button } from "antd";
 import { string } from "yup";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import Intro from "../../components/common/Intro";
 import CenterLayout from "../../components/layout/styled/CenterLayout";
 import { LoginFormWrapper } from "./style";
 import STRING from "../../constants/strings";
 import useForm from "../../hooks/useForm";
-import { getErrorDescription } from "../../network/error";
 import useMyInfoQuery from "../../apiHooks/myInfo/useMyInfoQuery";
 import useSignInMutation from "../../apiHooks/signIn/useSignInMutation";
 import { useAppDispatch } from "../../redux/store";
@@ -17,13 +15,13 @@ import { FormType } from "../../types/form/formType";
 import { ErrorToast } from "../../toast";
 
 export default function Login(): JSX.Element {
-  const { updateUserInfo } = useMyInfoQuery();
+  const { refetch } = useMyInfoQuery();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { signIn, loading } = useSignInMutation();
 
   const setUserInfo = async () => {
-    const user = await updateUserInfo();
+    const { data: user } = await refetch();
     dispatch(authActions.setUser(user));
   };
 

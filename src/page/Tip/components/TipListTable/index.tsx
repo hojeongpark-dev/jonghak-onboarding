@@ -1,13 +1,11 @@
-import { Button, Switch, TablePaginationConfig } from "antd";
+import { Button, Switch } from "antd";
 import { Link } from "react-router-dom";
 import { Fragment } from "react";
-import { toast } from "react-toastify";
 import { TipPage } from "../../../../graphql-types";
 import TableList from "../../../../components/common/Table";
 import { URLS } from "../../../../constants/urls";
 import { dateToVisibleFormat } from "../../../../util/date";
 import STRING from "../../../../constants/strings";
-import { getErrorDescription } from "../../../../network/error";
 import {
   useDeleteTipMutation,
   useTipUpdateMutation,
@@ -48,10 +46,6 @@ export default function TipListTable({
     } catch (e) {
       ErrorToast(e);
     }
-  };
-
-  const handlePageChange = ({ current }: TablePaginationConfig) => {
-    if (current) onPageChange(current);
   };
 
   return (
@@ -117,7 +111,7 @@ export default function TipListTable({
       ]}
       rowKey="code"
       dataSource={tips?.edges}
-      onChange={handlePageChange}
+      onPageChange={onPageChange}
     />
   );
 }

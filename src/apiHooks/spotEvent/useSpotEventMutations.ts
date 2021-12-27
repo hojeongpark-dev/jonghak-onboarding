@@ -13,8 +13,8 @@ import {
   UpdateGetFreeSpotEventArgs,
 } from "../../graphql-types";
 
-const DELETE_SPOT = gql`
-  mutation deleteSpot($code: Int!) {
+const DELETE_SPOT_EVENT = gql`
+  mutation deleteSpotEvent($code: Int!) {
     deleteSpotEvent(code: $code)
   }
 `;
@@ -23,7 +23,7 @@ function useDeleteSpotEventMutations() {
   const [deleteSpotEventMutation] = useMutation<
     Mutation,
     MutationDeleteSpotEventArgs
-  >(DELETE_SPOT);
+  >(DELETE_SPOT_EVENT);
 
   const deleteSpotEvent = (code: number) =>
     deleteSpotEventMutation({

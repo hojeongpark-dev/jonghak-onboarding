@@ -1,46 +1,33 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import useMyInfoQuery from "../apiHooks/myInfo/useMyInfoQuery";
 import { useAppDispatch } from "../redux/store";
 import { authActions } from "../redux/slice/auth";
-import { getErrorDescription } from "../network/error";
 import { URLS } from "../constants/urls";
 import Home from "../page/Home";
-import CenterLayout from "../components/layout/styled/CenterLayout";
 import useDidMount from "../hooks/useDidMount";
-import LoadingSpinner from "../components/common/LoadingSpinner";
 import { Component } from "../types/hoc";
 import { ErrorToast } from "../toast";
+import Loading from "../components/common/Loading";
 
 const withAuth = (Component: Component) => () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [pending, setPending] = useState(false);
-  const { loading, error, updateUserInfo } = useMyInfoQuery();
+  const { error, refetch, loading } = useMyInfoQuery();
 
   const checkAuth = async () => {
     try {
-      setPending(true);
-      const user = await updateUserInfo();
+      const { data: user } = await refetch();
       dispatch(authActions.setUser(user));
     } catch (e) {
       ErrorToast(e);
+      dispatch(authActions.logout());
       navigate(URLS.LOGIN);
-    } finally {
-      setPending(false);
     }
   };
 
   useDidMount(checkAuth);
 
-  if (loading || pending) {
-    return (
-      <CenterLayout>
-        <LoadingSpinner />
-      </CenterLayout>
-    );
-  }
+  if (loading) return <Loading />;
 
   if (error) return <Home />;
 

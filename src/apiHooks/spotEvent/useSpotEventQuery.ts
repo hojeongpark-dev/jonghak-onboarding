@@ -12,7 +12,7 @@ import {
 const STOP_EVENT = gql`
   ${SpotEventProduct}
   ${SpotEventProductIndividualEvent}
-  query SpotEvent($code: Int!, $language: LanguageType) {
+  query spotEvent($code: Int!, $language: LanguageType) {
     spotEvent(code: $code) {
       code
       type
