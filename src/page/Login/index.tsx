@@ -13,6 +13,7 @@ import { authActions } from "../../redux/slice/auth";
 import { URLS } from "../../constants/urls";
 import { FormType } from "../../types/form/formType";
 import { ErrorToast } from "../../toast";
+import { setToken } from "../../util/token";
 
 export default function Login(): JSX.Element {
   const { refetch } = useMyInfoQuery();
@@ -44,12 +45,15 @@ export default function Login(): JSX.Element {
     },
     onSubmit: async ({ id, password }) => {
       try {
-        const res = await signIn({
+        const { data } = await signIn({
           id,
           password,
         });
-        if (res?.signIn.accessToken) await setUserInfo();
-        navigate(URLS.HOME);
+        if (data?.signIn.accessToken) {
+          setToken(data.signIn.accessToken);
+          await setUserInfo();
+          navigate(URLS.HOME);
+        }
       } catch (e) {
         ErrorToast(e);
       }

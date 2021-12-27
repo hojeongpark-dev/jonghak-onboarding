@@ -31,16 +31,16 @@ export default function ImageUploadInput({
 
   return (
     <Upload.Dragger
-      customRequest={_unUsedRequest}
-      showUploadList={false}
-      onChange={(e) => {
-        makePreviewImage(e.file?.originFileObj);
-        onChange?.(e);
-      }}
       key={keyAndName}
       name={keyAndName}
       multiple={false}
       accept={"image/*"}
+      showUploadList={false}
+      customRequest={_unUsedRequest}
+      onChange={(e) => {
+        makePreviewImage(e.file?.originFileObj);
+        onChange?.(e);
+      }}
       {...removeUnusedProperty(imageUploadInputProps)}
     >
       <Flex p={32} flexDirection={"column"}>

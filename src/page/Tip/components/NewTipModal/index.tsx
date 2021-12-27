@@ -11,7 +11,7 @@ import useBlogForSearchQuery from "../../../../apiHooks/blog/useBlogForSearchQue
 import recordToArray from "../../../../util/record";
 import { useCreateTipMutation } from "../../../../apiHooks/tip/useTipMutations";
 import { getErrorDescription } from "../../../../network/error";
-import { usePreSignedUrlForUploadQuery } from "../../../../apiHooks/preSignedUrl/usePreSignedQueries";
+import { usePreSignedUrlForUploadLazyQuery } from "../../../../apiHooks/preSignedUrl/usePreSignedQueries";
 import s3Upload from "../../../../network/s3Upload";
 import DescriptionRow from "../../../../components/forms/DescriptionRow";
 import CustomModal from "../../../../components/common/CustomModal";
@@ -48,7 +48,7 @@ function NewTipModal({ isVisible, onClose, afterOk }: ModalProps): JSX.Element {
   const [uploadImage, setUploadImage] = useState<File | null>(null);
 
   const { createTip } = useCreateTipMutation();
-  const { getPreSignedUrl } = usePreSignedUrlForUploadQuery();
+  const { getPreSignedUrl } = usePreSignedUrlForUploadLazyQuery();
   const [blogQueryArgs, setBlogQueryArgs] = useImmer(initialArgs);
   const { blogOptions, refetch } = useBlogForSearchQuery(blogQueryArgs);
 

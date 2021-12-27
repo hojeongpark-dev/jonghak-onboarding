@@ -9,20 +9,20 @@ import { FormType } from "../../../types/form/formType";
 
 export default function TextInput({
   keyAndName,
-  initialValue,
   onChange,
   multiple,
+  initialValue,
   ...inputFormProps
 }: TextInputProps & TextFormInfo & CustomInputProps): JSX.Element {
   return (
     <Input
-      multiple={multiple}
       key={keyAndName}
-      name={keyAndName}
-      type={inputFormProps.formType === FormType.PASSWORD ? "password" : "text"}
       allowClear
-      defaultValue={initialValue}
+      name={keyAndName}
       onChange={onChange}
+      multiple={multiple}
+      defaultValue={initialValue}
+      type={inputFormProps.formType === FormType.PASSWORD ? "password" : "text"}
       {...removeUnusedProperty(inputFormProps)}
     />
   );

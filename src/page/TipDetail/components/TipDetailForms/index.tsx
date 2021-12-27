@@ -11,7 +11,7 @@ import { SelectOptionItem } from "../../../../types/form/inputProps";
 import { FormType } from "../../../../types/form/formType";
 import s3Upload from "../../../../network/s3Upload";
 import { useTipUpdateMutation } from "../../../../apiHooks/tip/useTipMutations";
-import { usePreSignedUrlForUploadQuery } from "../../../../apiHooks/preSignedUrl/usePreSignedQueries";
+import { usePreSignedUrlForUploadLazyQuery } from "../../../../apiHooks/preSignedUrl/usePreSignedQueries";
 import { ErrorToast, SuccessToast } from "../../../../toast";
 
 function getAfterValueWhenDiff<T>(before: T, after: T): T | undefined {
@@ -37,7 +37,7 @@ export default function TipDetailForms({
   onUpdate,
 }: TipDetailFormsProps): JSX.Element {
   const { updateTip, loading } = useTipUpdateMutation();
-  const { getPreSignedUrl } = usePreSignedUrlForUploadQuery();
+  const { getPreSignedUrl } = usePreSignedUrlForUploadLazyQuery();
 
   const connectedBlog = {
     label: `${tip.blogTrans.title}`,

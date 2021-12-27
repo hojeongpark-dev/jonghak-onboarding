@@ -4,8 +4,6 @@ import {
   SignInMutation,
   SignInMutationVariables,
 } from "../../graphql-types";
-import { NullablePromise } from "../../types/null";
-import { setToken } from "../../util/token";
 
 const SIGN_IN = gql`
   mutation signIn($input: SignInArgs!) {
@@ -21,18 +19,12 @@ export default function useSignInMutation() {
     SignInMutationVariables
   >(SIGN_IN);
 
-  const signIn = async (
-    signInArgs: SignInArgs
-  ): NullablePromise<SignInMutation> => {
-    const { data } = await requestSignIn({
+  const signIn = async (signInArgs: SignInArgs) =>
+    requestSignIn({
       variables: {
         input: signInArgs,
       },
     });
-
-    if (data) setToken(data?.signIn.accessToken);
-    return data;
-  };
 
   return {
     signIn,
