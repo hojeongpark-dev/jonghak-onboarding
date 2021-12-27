@@ -18,14 +18,14 @@ export default function TableList<T extends object>({
 
   return (
     <Table<T>
-      pagination={{
-        pageSize: DEFAULT_LIMIT_SIZE,
-        ...pagination,
-      }}
       onChange={(...args) => {
         const [config] = args;
         onChange?.(...args);
         handlePageChange(config);
+      }}
+      pagination={{
+        pageSize: DEFAULT_LIMIT_SIZE,
+        ...pagination,
       }}
       {...rest}
     />
