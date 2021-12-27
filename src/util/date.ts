@@ -13,4 +13,6 @@ export const dateTimeFormat = (
   if (startOrEnd === "end") return momentDate.format("yyyy-MM-DDT23:59");
   return momentDate.format("yyyy-MM-DDThh:mm");
 };
-export const isBeforeDate = (current: moment.Moment) => !current.isAfter();
+export const isBeforeDate = (date: moment.Moment) =>
+  // @ts-ignore
+  date.isBefore(moment().format("yyyyMMDD"));

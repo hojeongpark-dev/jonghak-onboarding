@@ -9,6 +9,14 @@ import { removeUnusedProperty } from "../../../util/form";
 import { DATE_TIME_PICKER_PLACEHOLDER } from "../../../constants/etc";
 import { isBeforeDate } from "../../../util/date";
 
+function disabledDateTime() {
+  const current = new Date();
+  return {
+    disabledHours: () => [...Array(current.getHours()).keys()],
+    disabledMinutes: () => [...Array(current.getMinutes()).keys()],
+  };
+}
+
 export default function DateRangePickerInput({
   onChange,
   fromNow = true,
@@ -24,21 +32,13 @@ export default function DateRangePickerInput({
     onChange?.(range);
   };
 
-  function disabledDateTime(time: any) {
-    console.log(time);
-    return {
-      disabledHours: () => [1, 2, 3],
-      disabledMinutes: () => [1, 2, 3, 4],
-      disabledSeconds: () => [55, 56],
-    };
-  }
   return (
     <DatePicker.RangePicker
       showTime={showTime}
       showSecond={showSecond}
       defaultValue={initialValue}
       disabledDate={fromNow ? isBeforeDate : undefined}
-      disabledTime={disabledDateTime}
+      disabledTime={fromNow ? disabledDateTime : undefined}
       onChange={(e) => handleEventPeriodChange(e as RangeMoment)}
       {...removeUnusedProperty(dateRangePickerProps)}
       placeholder={[timeFormat, timeFormat]}
