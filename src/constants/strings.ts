@@ -22,7 +22,7 @@ const STRING = {
   EMPTY: "",
   EVENT_PRICE: "이벤트 가격",
   EVENT_TYPE: "이벤트 유형",
-  EVNET_PERIOD: "이벤트 기간",
+  EVENT_PERIOD: "이벤트 기간",
   GIFT_NUMBER: "증정 수량",
   GIFT_TEXT: "개 증정",
   ID_PLACEHOLDER: "Email",

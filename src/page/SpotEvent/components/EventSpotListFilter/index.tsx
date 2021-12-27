@@ -59,7 +59,7 @@ export default function EventSpotListFilter({
           ))}
         </RadioButtonGroup>
       </DescriptionRow>
-      <DescriptionRow bordered={false} label={STRING.EVNET_PERIOD}>
+      <DescriptionRow bordered={false} label={STRING.EVENT_PERIOD}>
         <DatePicker.RangePicker
           placeholder={[DATE_PICKER_PLACEHOLDER, DATE_PICKER_PLACEHOLDER]}
           onChange={(e) => handleEventPeriodChange(e as RangeMoment)}

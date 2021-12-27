@@ -50,14 +50,12 @@ export default function SpotEvent(): JSX.Element {
 
   const handleEventTypeChange = (type: SpotEventType) => {
     setSpotEventsArgs((prev) => {
-      prev.input.filter ||= { type };
       prev.input.filter &&= { type };
     });
   };
 
   const handleEventPeriodChange = (period: PeriodArgs | null) => {
     setSpotEventsArgs((prev) => {
-      prev.input.filter ||= { period };
       prev.input.filter &&= { period };
     });
   };
