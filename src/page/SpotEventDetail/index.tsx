@@ -23,7 +23,10 @@ export default function SpotEventDetail(): JSX.Element {
   if (!spotEvent) return <div>404</div>;
 
   const { individuals, type, ...eventSummaryInfo } = spotEvent;
-  const { spot, code: eventCode } = eventSummaryInfo;
+  const {
+    spot: { items: spotItems },
+    code: eventCode,
+  } = eventSummaryInfo;
 
   return (
     <>
@@ -36,7 +39,7 @@ export default function SpotEventDetail(): JSX.Element {
         type={type}
         refetch={refetch}
         eventCode={eventCode}
-        spotItems={spot.items}
+        spotItems={spotItems}
         individualEvents={individuals}
       />
     </>

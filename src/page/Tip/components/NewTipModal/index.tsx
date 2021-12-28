@@ -2,7 +2,6 @@ import { RadioChangeEvent } from "antd";
 import { object, string } from "yup";
 import { useState } from "react";
 import { UploadChangeParam } from "antd/lib/upload/interface";
-import { toast } from "react-toastify";
 import { useImmer } from "use-immer";
 import useForm from "../../../../hooks/useForm";
 import STRING from "../../../../constants/strings";
@@ -10,7 +9,6 @@ import { languageCategoriesKo } from "../../constants";
 import useBlogForSearchQuery from "../../../../apiHooks/blog/useBlogForSearchQuery";
 import recordToArray from "../../../../util/record";
 import { useCreateTipMutation } from "../../../../apiHooks/tip/useTipMutations";
-import { getErrorDescription } from "../../../../network/error";
 import { usePreSignedUrlForUploadLazyQuery } from "../../../../apiHooks/preSignedUrl/usePreSignedQueries";
 import s3Upload from "../../../../network/s3Upload";
 import DescriptionRow from "../../../../components/forms/DescriptionRow";
@@ -49,6 +47,7 @@ function NewTipModal({ isVisible, onClose, afterOk }: ModalProps): JSX.Element {
 
   const { createTip } = useCreateTipMutation();
   const { getPreSignedUrl } = usePreSignedUrlForUploadLazyQuery();
+
   const [blogQueryArgs, setBlogQueryArgs] = useImmer(initialArgs);
   const { blogOptions, refetch } = useBlogForSearchQuery(blogQueryArgs);
 
@@ -101,10 +100,6 @@ function NewTipModal({ isVisible, onClose, afterOk }: ModalProps): JSX.Element {
     });
   };
 
-  useWhenUpdate(() => {
-    refetch(blogQueryArgs).catch(ErrorToast);
-  }, [blogQueryArgs]);
-
   const handleLanguageChange = ({
     target: { value: language },
   }: RadioChangeEvent) => {
@@ -120,6 +115,10 @@ function NewTipModal({ isVisible, onClose, afterOk }: ModalProps): JSX.Element {
       setUploadImage(file.originFileObj);
     }
   };
+
+  useWhenUpdate(() => {
+    refetch(blogQueryArgs).catch(ErrorToast);
+  }, [blogQueryArgs]);
 
   return (
     <CustomModal

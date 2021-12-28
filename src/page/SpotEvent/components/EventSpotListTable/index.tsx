@@ -1,6 +1,6 @@
-import { Button, Popconfirm, TablePaginationConfig } from "antd";
+import { Button, Popconfirm } from "antd";
 import { Link } from "react-router-dom";
-import { Fragment, useCallback } from "react";
+import { Fragment } from "react";
 import {
   SpotEventPage,
   SpotEventStatusType,

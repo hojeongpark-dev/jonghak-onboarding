@@ -118,7 +118,7 @@ export default function SpotEventIndividualList({
   };
 
   const getIndividualEvent = (itemCode: number) =>
-    individualEvents.find(({ item }) => itemCode === item.code);
+    individualEvents.find(({ item }) => item.code === itemCode);
 
   const loading =
     getFreeCreateLoading ||
@@ -131,8 +131,12 @@ export default function SpotEventIndividualList({
       <ListHeader>이벤트 상세 설정</ListHeader>
       <div>
         <Descriptions bordered>
-          <Descriptions.Item label={"대표상품 정가"}>₩</Descriptions.Item>
-          <Descriptions.Item label={"대표상품 할인가"}>₩</Descriptions.Item>
+          <Descriptions.Item label={STRING.REPRESENTATIVE_PRODUCT_ORIGIN_PRICE}>
+            ₩
+          </Descriptions.Item>
+          <Descriptions.Item label={STRING.REPRESENTATIVE_PRODUCT_DC_PRICE}>
+            ₩
+          </Descriptions.Item>
         </Descriptions>
       </div>
       {spotItems?.map((item) => {
@@ -152,8 +156,8 @@ export default function SpotEventIndividualList({
                 item={item}
                 loading={loading}
                 individualEvent={individualEvent}
-                onEventDelete={handleDeleteEvent}
                 onUpdateBaseValue={handleUpdateBaseValue}
+                onEventDelete={handleDeleteEvent}
                 onEventCreate={handleCreateDiscountIndividualSpotEvent}
               />
             )}

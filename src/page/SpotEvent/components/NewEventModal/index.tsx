@@ -5,7 +5,6 @@ import { useImmer } from "use-immer";
 import { ModalProps } from "../../../../types/modal";
 import CustomModal from "../../../../components/common/CustomModal";
 import STRING from "../../../../constants/strings";
-import RadioButtonGroup from "../../../../components/common/RadioButtonGroup";
 import recordToArray from "../../../../util/record";
 import { EVENT_TYPE_TO_KO } from "../../../../constants/enumToString";
 import DescriptionRow from "../../../../components/forms/DescriptionRow";
@@ -123,8 +122,8 @@ export default function NewEventModal({
             spotCode,
             description,
             period,
-            subValue: Number(subValue),
-            baseValue: Number(baseValue),
+            subValue,
+            baseValue,
           });
         }
         if (type === "DISCOUNT") {
@@ -150,7 +149,7 @@ export default function NewEventModal({
   const isInvalid =
     !formik.isValid ||
     !eventPeriod ||
-    (isGetFreeType && (Number(baseValue) < 1 || Number(subValue) < 1));
+    (isGetFreeType && (baseValue < 1 || subValue < 1));
 
   return (
     <CustomModal
@@ -162,17 +161,13 @@ export default function NewEventModal({
       onCancel={onClose}
     >
       <DescriptionRow label={`${STRING.EVENT_TYPE}*`}>
-        <RadioButtonGroup
-          addAll={false}
-          onChange={handleTypeChange}
-          defaultValue={INITIAL_TYPE}
-        >
+        <Radio.Group onChange={handleTypeChange} defaultValue={INITIAL_TYPE}>
           {recordToArray(EVENT_TYPE_TO_KO).map(([type, label]) => (
             <Radio.Button key={type} value={type}>
               {label}
             </Radio.Button>
           ))}
-        </RadioButtonGroup>
+        </Radio.Group>
       </DescriptionRow>
       <DescriptionRow label={`${STRING.CONNECTED_SPOT}*`}>
         <Form.connectedSpot
@@ -180,6 +175,7 @@ export default function NewEventModal({
           onSearch={handleSearchKeywordChange}
         />
       </DescriptionRow>
+      {/** N+N 이벤트일 경우 노출 */}
       {isGetFreeType && (
         <DescriptionRow label={`${STRING.GIFT_NUMBER}*`}>
           <Flex>

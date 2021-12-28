@@ -45,6 +45,8 @@ const STRING = {
   PRODUCT_DESCRIPTION: "Everyone is an insider",
   PRODUCT_NAME: "상품명",
   PRODUCT_TITLE: "Creatrip Admin",
+  REPRESENTATIVE_PRODUCT_ORIGIN_PRICE: "대표상품 정가",
+  REPRESENTATIVE_PRODUCT_DC_PRICE: "대표상품 할인가",
   SAVE: "저장하기",
   SELECT_LANGUAGE_LABEL: "언어 선택",
   SET_PERIOD: "기간 설정",

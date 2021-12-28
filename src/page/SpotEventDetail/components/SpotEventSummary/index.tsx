@@ -145,6 +145,7 @@ export default function SpotEventSummary({
       <DescriptionRow label={STRING.CONNECTED_SPOT}>
         <Tag color="blue">{spot.translations?.at(0)?.name}</Tag>
       </DescriptionRow>
+      {/** N+N 이벤트일 경우 노출 */}
       {isGetFreeType && (
         <DescriptionRow label={STRING.GIFT_NUMBER}>
           <Flex>
