@@ -42,6 +42,8 @@ const initialArgs: QueryBlogsArgs & BlogTranslationsArgs = {
   language: "KOREAN",
 };
 
+// 한국어 블로그가 연결된 상태에서 언어를 중국어로 변경하면 연결된 블로그가 그대로 있어서 계속 생성에 실패하여 유저가 무엇을 바꿔야 되는지 계속 모를 수 있어보임
+// 현재 어드민에서는 연결된 블로그를 초기화 해주는 식의 처리가 되어 있는데 따로 하지 않은 이유?
 function NewTipModal({ isVisible, onClose, afterOk }: ModalProps): JSX.Element {
   const [uploadImage, setUploadImage] = useState<File | null>(null);
 

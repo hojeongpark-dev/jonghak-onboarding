@@ -49,6 +49,7 @@ export default function TipDetail(): JSX.Element {
     refetchBlog(blogQueryArgs).catch(ErrorToast);
   }, [blogQueryArgs]);
 
+  // loading 이 변경된 경우에만 error를 체크하는 이유? 유저 입장에서는 갑자기 리다이렉트 될텐데 알림 같은걸 띄워줬으면,,
   useEffect(() => {
     if (error) navigate(URLS.TIP);
   }, [loading]);
